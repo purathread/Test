@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Səyahət - Fırlanan Qalereya</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+            background-color: #000; /* Arxa plan keçidləri üçün tünd zəmin */
+        }
+
+        /* Axıcı Arxa Plan Keçidləri Üçün 2 Qat (Layer) */
+        .bg-layer {
+            position: absolute;
+            top: -10%; left: -10%; right: -10%; bottom: -10%; /* Kənarlardakı blur kəsimlərini gizlətmək üçün */
+            background-size: cover;
+            background-position: center;
+            filter: blur(25px);
+            transition: opacity 1s ease-in-out;
+            z-index: 1;
+        }
+
+        #bg1 { opacity: 1; }
+        #bg2 { opacity: 0; }
+
+        /* Arxa planın üzərini yüngül tündləşdiririk ki, yazılar oxunaqlı olsun */
+        .overlay-dark {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 3;
+            display: flex;
+            height: 100%;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Dairənin Qutusu */
+        .circle-container {
+            position: absolute;
+            width: 80vh;
+            height: 80vh;
+            left: -40vh;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            transition: transform 1s cubic-bezier(0.65, 0, 0.15, 1);
+            box-shadow: 15px 0 50px rgba(0,0,0,0.5);
+            background-color: transparent;
+        }
+
+        /* Dairəni iki hissəyə bölən incə xətt */
+        .circle::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.8);
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+
+        /* Dairənin içindəki şəkillər (4 rüb) */
+        .quadrant {
+            position: absolute;
+            top: 0; left: 0; 
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            background-size: 50% 50%;
+            background-repeat: no-repeat;
+            background-position: top right;
+        }
+
+        .q0 { transform: rotate(0deg); }
+        .q1 { transform: rotate(90deg); }
+        .q2 { transform: rotate(180deg); }
+        .q3 { transform: rotate(270deg); }
+
+        /* Məlumat Paneli */
+        .content-container {
+            margin-left: 40vh;
+            width: calc(100vw - 40vh);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .text-content {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .text-content.hidden {
+            opacity: 0;
+            transform: translateY(25px);
+        }
+
+        h1 {
+            font-size: 4.5rem;
+            color: #fff;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.1;
+            text-shadow: 2px 4px 10px rgba(0,0,0,0.4);
+        }
+
+        p {
+            font-size: 1.15rem;
+            color: #f0f0f0;
+            line-height: 1.8;
+            max-width: 450px;
+            text-shadow: 1px 2px 5px rgba(0,0,0,0.5);
+        }
+
+        /* Növbəti düyməsi */
+        .next-btn {
+            align-self: flex-end;
+            margin-top: 40px;
+            margin-right: 5vw;
+            padding: 15px 35px;
+            background-color: #fff;
+            color: #111;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .next-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Mobil Ekranlar Üçün Uyğunlaşdırma */
+        @media (max-width: 768px) {
+            .circle-container {
+                width: 160vw;
+                height: 160vw;
+                left: -110vw;
+            }
+            .content-container {
+                margin-left: 50vw;
+                width: 50vw;
+                padding: 20px 15px;
+            }
+            h1 { font-size: 2.8rem; }
+            p { font-size: 0.95rem; }
+            .next-btn {
+                padding: 12px 25px;
+                font-size: 1rem;
+                margin-top: 30px;
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Axıcı keçid üçün 2 ədəd blurlu arxa plan qatı -->
+    <div class="bg-layer" id="bg1"></div>
+    <div class="bg-layer" id="bg2"></div>
+    <div class="overlay-dark"></div>
+
+    <div class="main-container">
+        <!-- Fırlanan Dairə -->
+        <div class="circle-container">
+            <div class="circle" id="circle">
+                <div class="quadrant q0"></div>
+                <div class="quadrant q1"></div>
+                <div class="quadrant q2"></div>
+                <div class="quadrant q3"></div>
+            </div>
+        </div>
+
+        <!-- Məlumat Və Düymə -->
+        <div class="content-container">
+            <div class="text-content" id="textContent">
+                <h1 id="title"></h1>
+                <p id="desc"></p>
+            </div>
+            <button class="next-btn" onclick="nextSlide()">Növbəti &rarr;</button>
+        </div>
+    </div>
+
+    <script>
+        const slides = [
+            { title: "Paris", desc: "Paris, Fransanın paytaxtı və ən böyük şəhəridir. İncəsənət, qastronomiya və mədəniyyət üzrə dünya mərkəzi olan bu şəhər Eyfel qülləsi kimi monumental abidələri ilə tanınır.", img: "https://images.unsplash.com/photo-1502602881460-5c9fc39bb2f3?auto=format&fit=crop&w=1000&q=80" },
+            { title: "Dubai", desc: "Dubay, müasir memarlığı, dəbdəbəli alış-veriş mərkəzləri və süni adaları ilə tanınan futuristik bir şəhərdir.", img: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1000&q=80" },
+            { title: "Tokyo", desc: "Yaponiya paytaxtı Tokyo, ənənəvi məbədləri neon işıqlı göydələnlərlə mükəmməl birləşdirən səs-küylü və dinamik metropoldur.", img: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1000&q=80" },
+            { title: "New York", desc: "Nyu-York, fərqli mədəniyyətlərin kəsişdiyi, heç vaxt yatmayan şəhər. Azadlıq heykəli və Times Square ilə məşhurdur.", img: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=1000&q=80" },
+            { title: "Roma", desc: "Tarixi qalıqları, Kolizeyi və füsunkar küçələri ilə Roma, sizi keçmişə aparan unikal bir İtaliya şəhəridir.", img: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1000&q=80" },
+            { title: "London", desc: "Böyük Britaniyanın ürəyi London. Temza çayı, Big Ben və qədim sarayları ilə unudulmaz bir tarixə ev sahibliyi edir.", img: "https://images.unsplash.com/photo-1513635269975-5969336cd100?auto=format&fit=crop&w=1000&q=80" },
+            { title: "İstanbul", desc: "Asiya və Avropanı birləşdirən tək şəhər. Boğazın mənzərəsi və tarixi məscidləri ilə hər kəsi valeh edir.", img: "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=1000&q=80" },
+            { title: "Bakı", desc: "Xəzərin mirvarisi Bakı. Qədim İçərişəhər və müasir Alov Qüllələri ilə keçmiş və gələcəyin harmoniyasını yaradır.", img: "https://images.unsplash.com/photo-1582236352932-eb5b252dfa7e?auto=format&fit=crop&w=1000&q=80" }
+        ];
+
+        let currentIndex = 0;
+        let currentRotation = 0;
+        let isAnimating = false;
+        let activeBg = 1; // Hansı arxa plan qatının aktiv olduğunu izləyirik
+        const quads = document.querySelectorAll('.quadrant');
+
+        function init() {
+            quads[0].style.backgroundImage = `url('${slides[0].img}')`;
+            quads[1].style.backgroundImage = `url('${slides[1].img}')`;
+            quads[2].style.backgroundImage = `url('${slides[2].img}')`;
+            quads[3].style.backgroundImage = `url('${slides[7].img}')`;
+
+            document.getElementById('title').innerText = slides[0].title;
+            document.getElementById('desc').innerText = slides[0].desc;
+            document.getElementById('bg1').style.backgroundImage = `url('${slides[0].img}')`;
+        }
+
+        function nextSlide() {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            currentIndex = (currentIndex + 1) % 8;
+            currentRotation -= 90;
+
+            const textContent = document.getElementById('textContent');
+            const circle = document.getElementById('circle');
+
+            // Arxa planın axıcı dəyişməsi (Crossfade effekti)
+            const nextBg = activeBg === 1 ? 2 : 1;
+            const currentBgEl = document.getElementById(`bg${activeBg}`);
+            const nextBgEl = document.getElementById(`bg${nextBg}`);
+
+            nextBgEl.style.backgroundImage = `url('${slides[currentIndex].img}')`;
+            nextBgEl.style.opacity = 1; // Yeni arxa planı aydınlaşdır
+            currentBgEl.style.opacity = 0; // Köhnə arxa planı şəffaflaşdır
+            activeBg = nextBg;
+
+            // Mətni gizlət
+            textContent.classList.add('hidden');
+
+            // Dairəni fırlat
+            circle.style.transform = `rotate(${currentRotation}deg)`;
+
+            // Yeni mətni gətir
+            setTimeout(() => {
+                document.getElementById('title').innerText = slides[currentIndex].title;
+                document.getElementById('desc').innerText = slides[currentIndex].desc;
+                textContent.classList.remove('hidden');
+            }, 500);
+
+            // Növbəti gizli şəkli dairəyə yüklə
+            setTimeout(() => {
+                let quadIndexToUpdate = (currentIndex + 2) % 4;
+                let imageIndexToLoad = (currentIndex + 2) % 8;
+                quads[quadIndexToUpdate].style.backgroundImage = `url('${slides[imageIndexToLoad].img}')`;
+                
+                isAnimating = false;
+            }, 1000);
+        }
+
+        init();
+    </script>
+</body>
+</html>
