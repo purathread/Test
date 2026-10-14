@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Səyahət - Axıcı Animasiya</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+            overflow: hidden;
+            transition: background-color 1.2s ease-in-out;
+        }
+
+        .main-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 90%;
+            max-width: 1300px;
+        }
+
+        /* Fırlanan Dairə Qutusu */
+        .circle-wrapper {
+            position: relative;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            /* Axıcı fırlanma effekti (Canva stili) */
+            transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        /* Dairənin 4 Hissəsi (Videodakı şəkillər kimi) */
+        .quadrant {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Hər ölkə üçün nümunə şəkillər (Unsplash-dan) */
+        .q1 { top: 0; left: 0; background-image: url('https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=800&q=80'); } /* Dubai */
+        .q2 { top: 0; left: 50%; background-image: url('https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=800&q=80'); } /* India */
+        .q3 { top: 50%; left: 50%; background-image: url('https://images.unsplash.com/photo-1502602881460-5c9fc39bb2f3?auto=format&fit=crop&w=800&q=80'); } /* Paris */
+        .q4 { top: 50%; left: 0; background-image: url('https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=800&q=80'); } /* Japan */
+
+        /* Mətn Paneli */
+        .text-panel {
+            width: 45%;
+            padding: 40px;
+        }
+
+        .text-content {
+            /* Mətnlərin axıcı gəliş gediş animasiyası */
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mətn dəyişərkən gizlənmə effekti */
+        .text-content.hidden {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        h1 {
+            font-size: 5rem;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #4a4a4a;
+            line-height: 1.8;
+        }
+
+        .hint {
+            position: absolute;
+            bottom: 30px;
+            font-size: 1rem;
+            color: #888;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <!-- Fırlanan Dairə -->
+        <div class="circle-wrapper" id="wheel" onclick="rotateWheel()">
+            <div class="quadrant q1"></div>
+            <div class="quadrant q2"></div>
+            <div class="quadrant q3"></div>
+            <div class="quadrant q4"></div>
+        </div>
+
+        <!-- Məlumat Hissəsi -->
+        <div class="text-panel">
+            <div class="text-content" id="textContent">
+                <h1 id="title">Dubai</h1>
+                <p id="desc">Dubay, Birləşmiş Ərəb Əmirliklərində dəbdəbəli alış-verişi, ultramüasir memarlığı və canlı gecə həyatı ilə tanınan şəhərdir.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="hint">Növbəti slayda keçmək üçün dairəyə klikləyin</div>
+
+    <script>
+        let currentRotation = 0;
+        let currentIndex = 0;
+
+        // Ölkələrin məlumatları
+        const data = [
+            { 
+                title: "Dubai", 
+                desc: "Dubay, Birləşmiş Ərəb Əmirliklərində dəbdəbəli alış-verişi, ultramüasir memarlığı və canlı gecə həyatı ilə tanınan emirlikdir. Şəhərin simvolu olan Burj Khalifa göydələnlərlə dolu üfüq xəttinə hakimdir.",
+                bg: "#e0f7fa"
+            },
+            { 
+                title: "India", 
+                desc: "Hindistan, rəsmi olaraq Hindistan Respublikası, Cənubi Asiyada yerləşən ölkədir. Sahəsinə görə dünyanın yeddinci, əhalisinə görə isə ən böyük ölkəsidir.",
+                bg: "#fbe9e7"
+            },
+            { 
+                title: "Paris", 
+                desc: "Paris, Fransanın paytaxtı və ən böyük şəhəridir. İncəsənət, qastronomiya və mədəniyyət üzrə dünya mərkəzi olan bu şəhər Eyfel qülləsi kimi monumental abidələri ilə tanınır.",
+                bg: "#f3e5f5"
+            },
+            { 
+                title: "Japan", 
+                desc: "Yaponiya Şərqi Asiyada ada ölkəsidir. Sakit okeanın şimal-qərbində yerləşən bu ölkə qədim ənənələri və ən son texnoloji yenilikləri özündə mükəmməl birləşdirir.",
+                bg: "#ffebee"
+            }
+        ];
+
+        function rotateWheel() {
+            // Dairəni saat əqrəbinin əksi istiqamətində 90 dərəcə fırladırıq
+            currentRotation -= 90;
+            currentIndex = (currentIndex + 1) % 4;
+            
+            const wheel = document.getElementById('wheel');
+            const textContent = document.getElementById('textContent');
+            const title = document.getElementById('title');
+            const desc = document.getElementById('desc');
+            
+            // 1. Dairəni fırlat
+            wheel.style.transform = `rotate(${currentRotation}deg)`;
+            
+            // 2. Köhnə mətni yoxa çıxart (aşağı sürüşərək)
+            textContent.classList.add('hidden');
+            
+            // 3. Animasiya gedərkən mətni və arxa fonu dəyiş (600ms gözləyərək)
+            setTimeout(() => {
+                title.innerText = data[currentIndex].title;
+                desc.innerText = data[currentIndex].desc;
+                document.body.style.backgroundColor = data[currentIndex].bg;
+                
+                // 4. Yeni mətni geri gətir
+                textContent.classList.remove('hidden');
+            }, 600); // 600ms mətnin yoxa çıxma müddətidir
+        }
+    </script>
+</body>
+</html>
