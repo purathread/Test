@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xüsusi Geyim və Çap Xidmətləri</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800;900&display=swap');
 
         * {
             box-sizing: border-box;
@@ -16,14 +16,22 @@
         body, html {
             width: 100vw;
             height: 100vh;
-            overflow: hidden;
             font-family: 'Poppins', sans-serif;
             background-color: #000;
+            overflow-x: hidden;
+            overflow-y: hidden; /* Slayd vaxtı scroll olmasın */
         }
 
-        /* YENİ VƏ QÜSURSUZ ARXA PLAN METODU (Çərçivə problemi yoxdur) */
-        .bg-layer {
+        /* --- SLAYDER (Köhnə Səhifə) --- */
+        #sliderView {
             position: fixed;
+            inset: 0;
+            z-index: 10;
+            transition: opacity 1s ease-in-out, transform 1s cubic-bezier(0.65, 0, 0.15, 1);
+        }
+
+        .bg-layer {
+            position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             background-size: cover;
             background-position: center;
@@ -34,9 +42,8 @@
         #bg1 { opacity: 1; }
         #bg2 { opacity: 0; }
 
-        /* Arxa planın üzərindəki şüşə effekti (Blur) və tündləşdirmə */
         .glass-overlay {
-            position: fixed;
+            position: absolute;
             inset: 0;
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
@@ -44,7 +51,6 @@
             z-index: 2;
         }
 
-        /* ƏSAS DÜZÜLÜŞ (Yuxarıdan aşağı) */
         .main-container {
             position: relative;
             z-index: 3;
@@ -53,10 +59,8 @@
             align-items: center;
             justify-content: flex-start;
             height: 100vh;
-            overflow: hidden;
         }
 
-        /* Dairə yuxarıda */
         .circle-positioner {
             position: relative;
             width: 70vh;
@@ -65,7 +69,6 @@
             flex-shrink: 0;
         }
 
-        /* Fırlanan Dairə */
         .circle-spinner {
             width: 100%;
             height: 100%;
@@ -76,7 +79,6 @@
             overflow: hidden;
         }
 
-        /* Şəkillər Qatı */
         .circle-slide {
             position: absolute;
             inset: 0;
@@ -89,7 +91,6 @@
         #cSlide1 { opacity: 1; }
         #cSlide2 { opacity: 0; }
 
-        /* Məlumat Paneli Altda */
         .content-container {
             flex-grow: 1;
             display: flex;
@@ -113,26 +114,22 @@
             transform: translateY(30px);
         }
 
-        h1 {
+        .content-container h1 {
             font-size: 3.5rem;
             color: #fff;
             font-weight: 800;
             margin-bottom: 15px;
             line-height: 1.2;
             text-shadow: 2px 4px 15px rgba(0,0,0,0.6);
-            letter-spacing: -1px;
         }
 
-        p {
+        .content-container p {
             font-size: 1.15rem;
             color: #e0e0e0;
             line-height: 1.8;
             max-width: 650px;
-            margin: 0 auto;
-            text-shadow: 1px 2px 10px rgba(0,0,0,0.6);
         }
 
-        /* Mərkəzlənmiş Növbəti Düyməsi */
         .next-btn {
             margin-top: 35px;
             padding: 16px 45px;
@@ -141,148 +138,363 @@
             border: none;
             border-radius: 50px;
             font-size: 1.1rem;
-            font-weight: 600;
+            font-weight: 800;
+            text-transform: uppercase;
             cursor: pointer;
             box-shadow: 0 10px 30px rgba(0,0,0,0.4);
             transition: all 0.3s ease;
+            letter-spacing: 1px;
         }
 
-        .next-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+        .next-btn:active { transform: scale(0.95); }
+
+        /* --- KATALOQ SƏHİFƏSİ (Adidas Üslubu) --- */
+        #catalogView {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            min-height: 100vh;
+            background-color: #fff;
+            color: #000;
+            z-index: 5;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s cubic-bezier(0.65, 0, 0.15, 1);
+            padding: 80px 5%;
         }
 
-        .next-btn:active {
-            transform: translateY(0) scale(0.95);
+        /* Aktiv Səhifə Keçid Klassları */
+        body.catalog-active {
+            overflow-y: auto; /* Kataloqda scroll aktivləşir */
+            background-color: #fff;
+        }
+        
+        body.catalog-active #sliderView {
+            opacity: 0;
+            transform: scale(1.05);
+            pointer-events: none;
         }
 
-        /* Mobil Ekranlar Üçün Uyğunlaşdırma */
+        body.catalog-active #catalogView {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            z-index: 20;
+        }
+
+        /* Adidas Still Kataloq Elementləri */
+        .catalog-header {
+            text-align: center;
+            margin-bottom: 60px;
+            text-transform: uppercase;
+        }
+
+        .catalog-header h2 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            letter-spacing: -2px;
+            margin-bottom: 10px;
+        }
+
+        .catalog-header p {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #666;
+            letter-spacing: 1px;
+        }
+
+        .category-section {
+            margin-bottom: 70px;
+        }
+
+        .category-title {
+            font-size: 2rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            border-bottom: 4px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            display: inline-block;
+            letter-spacing: -1px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .product-card {
+            border: 2px solid #eee;
+            padding: 25px;
+            transition: border-color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-card:hover {
+            border-color: #000;
+        }
+
+        .prod-name {
+            font-size: 1.3rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .prod-desc {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .price-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .price-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .price-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 800;
+            color: #888;
+        }
+
+        .price-val {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #000;
+        }
+
+        .price-item.naxis {
+            text-align: right;
+        }
+
         @media (max-width: 768px) {
-            .circle-positioner {
-                width: 130vw;
-                height: 130vw;
-                margin-top: -30vw;
-            }
-            .content-container {
-                padding: 15px 20px;
-            }
-            h1 { font-size: 2.2rem; margin-bottom: 10px; }
-            p { font-size: 0.95rem; line-height: 1.6; }
-            .next-btn {
-                padding: 14px 35px;
-                font-size: 1rem;
-                margin-top: 25px;
-            }
+            .catalog-header h2 { font-size: 2.5rem; }
+            .category-title { font-size: 1.5rem; }
+            .product-grid { grid-template-columns: 1fr; }
+            .circle-positioner { width: 130vw; height: 130vw; margin-top: -30vw; }
+            .content-container h1 { font-size: 2.2rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Arxa Plan Qatları -->
-    <div class="bg-layer" id="bg1"></div>
-    <div class="bg-layer" id="bg2"></div>
-    <div class="glass-overlay"></div>
+    <!-- === SLAYDER SƏHİFƏSİ === -->
+    <div id="sliderView">
+        <div class="bg-layer" id="bg1"></div>
+        <div class="bg-layer" id="bg2"></div>
+        <div class="glass-overlay"></div>
 
-    <div class="main-container">
-        <!-- Fırlanan Dairə Yuxarıda -->
-        <div class="circle-positioner">
-            <div class="circle-spinner" id="spinner">
-                <div class="circle-slide" id="cSlide1"></div>
-                <div class="circle-slide" id="cSlide2"></div>
+        <div class="main-container">
+            <div class="circle-positioner">
+                <div class="circle-spinner" id="spinner">
+                    <div class="circle-slide" id="cSlide1"></div>
+                    <div class="circle-slide" id="cSlide2"></div>
+                </div>
+            </div>
+
+            <div class="content-container">
+                <div class="text-content" id="textContent">
+                    <h1 id="title"></h1>
+                    <p id="desc"></p>
+                </div>
+                <!-- Düymə mətni dinamik dəyişəcək -->
+                <button class="next-btn" id="nextBtn" onclick="nextAction()">Növbəti &rarr;</button>
             </div>
         </div>
+    </div>
 
-        <!-- Məlumat Və Düymə Aşağıda -->
-        <div class="content-container">
-            <div class="text-content" id="textContent">
-                <h1 id="title"></h1>
-                <p id="desc"></p>
-            </div>
-            <button class="next-btn" onclick="nextSlide()">Növbəti &rarr;</button>
+    <!-- === ADIDAS ÜSLUBUNDA KATALOQ SƏHİFƏSİ === -->
+    <div id="catalogView">
+        <div class="catalog-header">
+            <h2>Məhsullarımız</h2>
+            <p>BÜTÜN QİYMƏTLƏRƏ ƏDV DAXİLDİR. NAXIŞLI QİYMƏTLƏR +4 AZN</p>
+        </div>
+
+        <div id="catalogContent">
+            <!-- Məhsullar bura JavaScript ilə yüklənəcək -->
         </div>
     </div>
 
     <script>
-        // Biznesinizə uyğun 5 xidmət məlumatı və şəkilləri
+        // Slayder Məlumatları (5 ədəd)
         const slides = [
-            { 
-                title: "Fərdi Dizaynlar", 
-                desc: "Geyimlərin üzərində olacaq şəkilləri DTF çap və naxış toxuma üçün müştərilərin zövqünə uyğun, xüsusi olaraq dizayn edirik.", 
-                img: "https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?auto=format&fit=crop&w=1200&q=80" 
+            { title: "Fərdi Dizaynlar", desc: "Geyimlərin üzərində olacaq şəkilləri DTF çap və naxış toxuma üçün müştərilərin zövqünə uyğun, xüsusi olaraq dizayn edirik.", img: "https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?auto=format&fit=crop&w=1200&q=80" },
+            { title: "DTF Çap Xidməti", desc: "İstənilən növ geyimlərin üzərinə yüksək keyfiyyətli, rəngarəng və uzunömürlü DTF çap tətbiq edirik.", img: "https://images.unsplash.com/photo-1562157873-818bc0726f68?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Naxış Toxuma", desc: "Geyimlərin və müxtəlif aksesuarların üzərinə peşəkar avadanlıqlarla xüsusi naxış toxuma (embroidery) xidməti göstəririk.", img: "https://images.unsplash.com/photo-1624831610444-59e21896d8dd?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Restoran Uniformaları", desc: "Restoran işçiləri üçün rahat, davamlı və brendinizə uyğun peşəkar uniformalar və xüsusi önlüklər hazırlayırıq.", img: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=1200&q=80" },
+            { title: "Kepka Üzərində Loqo", desc: "Kepkaların üzərinə şirkətinizin və ya brendinizin loqosunu yüksək dəqiqliklə tətbiq edirik.", img: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=1200&q=80" }
+        ];
+
+        // Kataloq Məlumatları (Şəkildən çıxarılmışdır)
+        const productsData = [
+            {
+                category: "Aksesuarlar və Promo",
+                items: [
+                    { name: "Bandana", desc: "Standart promo", price: "7", naxis: "11" },
+                    { name: "Şərf", desc: "Standart promo", price: "11", naxis: "15" },
+                    { name: "Kepka (Cırtlı)", desc: "Standart promo / Cırt bərkitməli", price: "15", naxis: "19" },
+                    { name: "Kepka (Dəmirli)", desc: "Dəmir toqqalı bərkitmə", price: "11", naxis: "15" },
+                    { name: "Qalstuk", desc: "Standart promo", price: "17", naxis: "21" },
+                    { name: "Eko Çanta", desc: "Lacos, 65/35 ilkra qarışımlı", price: "14", naxis: "18" }
+                ]
             },
-            { 
-                title: "DTF Çap Xidməti", 
-                desc: "İstənilən növ geyimlərin üzərinə yüksək keyfiyyətli, rəngarəng və uzunömürlü DTF çap tətbiq edirik.", 
-                img: "https://images.unsplash.com/photo-1562157873-818bc0726f68?auto=format&fit=crop&w=1200&q=80" 
+            {
+                category: "Tekstil və Geyim Məhsulları",
+                items: [
+                    { name: "Bağça / Məktəbli Geyimi", desc: "Uşaq tekstili", price: "11", naxis: "15" },
+                    { name: "T-shirt (Süprem)", desc: "Süprem (90% pambıq, likralı)", price: "21", naxis: "25" },
+                    { name: "T-shirt (2 iplik)", desc: "2 iplik (95% pambıq)", price: "21", naxis: "25" },
+                    { name: "Polo T-shirt (Lacos)", desc: "Lacos, 65/35 ilkra qarışımlı", price: "21", naxis: "25" },
+                    { name: "Polo T-shirt (2 iplik)", desc: "2 iplik (95% pambıq)", price: "21", naxis: "25" },
+                    { name: "Polo Sweater (Lacos)", desc: "Lacos, 65/35 ilkra qarışımlı", price: "23", naxis: "27" },
+                    { name: "Polo Sweater (2 iplik)", desc: "2 iplik (95% pambıq)", price: "23", naxis: "27" },
+                    { name: "Polo Sweater (3 iplik)", desc: "3 iplik (95% pambıq)", price: "23", naxis: "27" },
+                    { name: "Sweater (Lacos)", desc: "Lacos, 65/35 ilkra qarışımlı", price: "21", naxis: "25" },
+                    { name: "Sweater (2 iplik)", desc: "2 iplik (90-95% pambıq)", price: "23", naxis: "27" },
+                    { name: "Sweater (3 iplik)", desc: "3 iplik (90-95% pambıq)", price: "25", naxis: "29" },
+                    { name: "Sweater (Yarımzamok, 2 iplik)", desc: "2 iplik (95% pambıq)", price: "25", naxis: "29" },
+                    { name: "Sweater (Yarımzamok, 3 iplik)", desc: "3 iplik (95% pambıq)", price: "27", naxis: "31" },
+                    { name: "Sweater (Zamoklu, 2 iplik)", desc: "2 iplik (95% pambıq)", price: "28", naxis: "32" },
+                    { name: "Sweater (Zamoklu, 3 iplik)", desc: "3 iplik (95% pambıq)", price: "30", naxis: "34" },
+                    { name: "Hoodie (2 iplik)", desc: "2 iplik (90-95% pambıq)", price: "25", naxis: "29" },
+                    { name: "Hoodie (3 iplik)", desc: "3 iplik (90-95% pambıq)", price: "27", naxis: "31" },
+                    { name: "Hoodie (Zamoklu, 2 iplik)", desc: "2 iplik (90-95% pambıq)", price: "28", naxis: "32" },
+                    { name: "Hoodie (Zamoklu, 3 iplik)", desc: "3 iplik (90-95% pambıq)", price: "30", naxis: "34" },
+                    { name: "Şalvar (2 iplik)", desc: "2 iplik (95% pambıq)", price: "26", naxis: "30" },
+                    { name: "Şalvar (3 iplik)", desc: "3 iplik (95% pambıq)", price: "28", naxis: "32" },
+                    { name: "Önlük (Uzun)", desc: "Uzun biçimli önlük", price: "23", naxis: "27" },
+                    { name: "Önlük (Qısa)", desc: "Qısa biçimli önlük", price: "19", naxis: "23" }
+                ]
             },
-            { 
-                title: "Naxış Toxuma", 
-                desc: "Geyimlərin və müxtəlif aksesuarların üzərinə peşəkar avadanlıqlarla xüsusi naxış toxuma (embroidery) xidməti göstəririk.", 
-                img: "https://images.unsplash.com/photo-1624831610444-59e21896d8dd?auto=format&fit=crop&w=1200&q=80" 
-            },
-            { 
-                title: "Restoran Uniformaları", 
-                desc: "Restoran işçiləri üçün rahat, davamlı və brendinizə uyğun peşəkar uniformalar və xüsusi önlüklər hazırlayırıq.", 
-                img: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=1200&q=80" 
-            },
-            { 
-                title: "Kepka Üzərində Loqo", 
-                desc: "Kepkaların üzərinə şirkətinizin və ya brendinizin loqosunu yüksək dəqiqliklə tətbiq edirik.", 
-                img: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=1200&q=80" 
+            {
+                category: "Xüsusi və İş Geyimləri",
+                items: [
+                    { name: "Gödəkcə (Plaşoviy)", desc: "Plaşoviy material", price: "36", naxis: "40" },
+                    { name: "Gödəkcə (Təytis parça)", desc: "Təytis parça", price: "38", naxis: "42" },
+                    { name: "Uzunqol İş Köynəyi", desc: "80% pambıq, 20% polyester", price: "30", naxis: "34" },
+                    { name: "Aşbaz Geyimi", desc: "Xüsusi aşpaz forması", price: "42", naxis: "46" },
+                    { name: "Xadimə Geyimi", desc: "Xidmətçi forması", price: "37", naxis: "41" },
+                    { name: "Tibbi Xalat (Qısaqol)", desc: "Qısaqol tibbi geyim", price: "36", naxis: "40" },
+                    { name: "Tibbi Xalat (Uzunqol)", desc: "Uzunqol tibbi geyim", price: "40", naxis: "44" },
+                    { name: "Məzun Geyimi (Atlas parça)", desc: "Atlas parça mantiya", price: "31", naxis: "35" },
+                    { name: "Məzun Geyimi (Mat parça)", desc: "Mat parça mantiya", price: "35", naxis: "39" },
+                    { name: "Təhlükəsizlik Jileti", desc: "Zamoklu reflektorlu jilet", price: "20", naxis: "24" }
+                ]
             }
         ];
 
         let currentIndex = 0;
         let currentRotation = 0;
         let isAnimating = false;
-        
         let activeBg = 1;
         let activeSlideLayer = 1;
 
+        // Başlanğıc yükləmə
         function init() {
             document.getElementById('cSlide1').style.backgroundImage = `url('${slides[0].img}')`;
             document.getElementById('bg1').style.backgroundImage = `url('${slides[0].img}')`;
             document.getElementById('title').innerText = slides[0].title;
             document.getElementById('desc').innerText = slides[0].desc;
+            renderCatalog();
         }
 
-        function nextSlide() {
-            if (isAnimating) return;
-            isAnimating = true;
+        // Kataloqu HTML-ə yazdırmaq (Adidas Grid Style)
+        function renderCatalog() {
+            const container = document.getElementById('catalogContent');
+            let html = '';
 
-            currentIndex = (currentIndex + 1) % slides.length; // 5 xidmət arasında dövr edir
+            productsData.forEach(cat => {
+                html += `
+                    <div class="category-section">
+                        <div class="category-title">${cat.category}</div>
+                        <div class="product-grid">
+                `;
+                
+                cat.items.forEach(item => {
+                    html += `
+                        <div class="product-card">
+                            <div>
+                                <div class="prod-name">${item.name}</div>
+                                <div class="prod-desc">${item.desc}</div>
+                            </div>
+                            <div class="price-box">
+                                <div class="price-item">
+                                    <span class="price-label">Sadə</span>
+                                    <span class="price-val">${item.price} AZN</span>
+                                </div>
+                                <div class="price-item naxis">
+                                    <span class="price-label">Naxışlı</span>
+                                    <span class="price-val">${item.naxis} AZN</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `</div></div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Düyməyə basıldıqda baş verəcək hadisə
+        function nextAction() {
+            if (isAnimating) return;
+
+            // Əgər sonuncu slayddayıqsa kataloqa keçid et
+            if (currentIndex === slides.length - 1) {
+                document.body.classList.add('catalog-active');
+                return;
+            }
+
+            // Əks halda slayd fırlanmasına davam et
+            isAnimating = true;
+            currentIndex++;
             currentRotation -= 360;
 
             const textContent = document.getElementById('textContent');
             const spinner = document.getElementById('spinner');
+            const nextBtn = document.getElementById('nextBtn');
+
+            // Əgər sonuncu slayd gəlirsə düymənin adını dəyiş
+            if (currentIndex === slides.length - 1) {
+                setTimeout(() => { nextBtn.innerText = "Kataloqa Keçid"; }, 500);
+            }
 
             // Arxa plan Keçidi
             const nextBg = activeBg === 1 ? 2 : 1;
-            const currentBgEl = document.getElementById(`bg${activeBg}`);
-            const nextBgEl = document.getElementById(`bg${nextBg}`);
-            
-            nextBgEl.style.backgroundImage = `url('${slides[currentIndex].img}')`;
-            nextBgEl.style.opacity = 1;
-            currentBgEl.style.opacity = 0;
+            document.getElementById(`bg${nextBg}`).style.backgroundImage = `url('${slides[currentIndex].img}')`;
+            document.getElementById(`bg${nextBg}`).style.opacity = 1;
+            document.getElementById(`bg${activeBg}`).style.opacity = 0;
             activeBg = nextBg;
 
             // Dairə İçi Şəkil Keçidi
-            const nextSlideLayerId = activeSlideLayer === 1 ? 2 : 1;
-            const currentSlideEl = document.getElementById(`cSlide${activeSlideLayer}`);
-            const nextSlideEl = document.getElementById(`cSlide${nextSlideLayerId}`);
-            
-            nextSlideEl.style.backgroundImage = `url('${slides[currentIndex].img}')`;
-            nextSlideEl.style.opacity = 1;
-            currentSlideEl.style.opacity = 0;
-            activeSlideLayer = nextSlideLayerId;
+            const nextLayer = activeSlideLayer === 1 ? 2 : 1;
+            document.getElementById(`cSlide${nextLayer}`).style.backgroundImage = `url('${slides[currentIndex].img}')`;
+            document.getElementById(`cSlide${nextLayer}`).style.opacity = 1;
+            document.getElementById(`cSlide${activeSlideLayer}`).style.opacity = 0;
+            activeSlideLayer = nextLayer;
 
-            // Mətni gizlət
+            // Animasiyalar
             textContent.classList.add('hidden');
-
-            // Dairəni fırlat
             spinner.style.transform = `rotate(${currentRotation}deg)`;
 
-            // Yeni mətni gətir
             setTimeout(() => {
                 document.getElementById('title').innerText = slides[currentIndex].title;
                 document.getElementById('desc').innerText = slides[currentIndex].desc;
