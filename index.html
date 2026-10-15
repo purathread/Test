@@ -15,17 +15,20 @@
 
         html { scroll-behavior: smooth; }
 
+        /* QARA ÇIXINTI XƏTASININ HƏLLİ */
+        html, body {
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            overflow-x: hidden; /* Sağdakı qara boşluğu ləğv edir */
+            font-family: 'Poppins', sans-serif;
+            background-color: #000;
+        }
+
         html.scroll-active, body.scroll-active {
             overflow-y: auto !important;
             height: auto !important;
-        }
-
-        body, html {
-            width: 100vw;
-            height: 100vh;
-            font-family: 'Poppins', sans-serif;
-            background-color: #000;
-            overflow: hidden; 
+            background-color: #fff; /* Kataloqa keçəndə qara arxa planı tamamilə ağ edir */
         }
 
         /* --- LOQO --- */
@@ -37,7 +40,7 @@
             z-index: 999;
             width: 150px;
             filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
-            transition: all 0.5s ease;
+            transition: opacity 0.5s ease;
         }
 
         /* --- HAMBURGER DÜYMƏSİ --- */
@@ -55,8 +58,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            /* Giriş səhifəsində gizlidir */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             opacity: 0;
             transform: translateX(-50px) rotate(-180deg);
             pointer-events: none;
@@ -72,7 +74,6 @@
             transition: 0.4s;
         }
 
-        /* Kataloq aktivləşdikdə çox axıcı şəkildə peyda olur */
         body.catalog-active .hamburger-btn {
             opacity: 1;
             transform: translateX(0) rotate(0);
@@ -95,7 +96,7 @@
             justify-content: center;
             align-items: center;
             box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             font-size: 1.5rem;
             border: 3px solid #fff;
             opacity: 0;
@@ -127,12 +128,12 @@
         .sidebar-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.5);
             z-index: 10000;
             opacity: 0;
             visibility: hidden;
             transition: all 0.4s ease;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(4px);
         }
         .sidebar-overlay.active { opacity: 1; visibility: visible; }
 
@@ -149,6 +150,7 @@
             flex-direction: column;
             transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1);
             overflow-y: auto;
+            overflow-x: hidden;
         }
 
         #contactSidebar { left: 0; transform: translateX(-100%); }
@@ -166,17 +168,16 @@
             font-weight: 800;
         }
 
-        /* Əlaqə Səliqəli Tərtibat */
+        /* --- TƏKMİLLƏŞDİRİLMİŞ ƏLAQƏ DİZAYNI --- */
         .contact-header { text-align: center; margin-bottom: 30px; }
-        .contact-header img { width: 120px; margin-bottom: 15px; }
-        .contact-title { font-size: 1.5rem; font-weight: 900; text-transform: uppercase; border-bottom: 3px solid #eee; padding-bottom: 15px; }
+        .contact-header img { width: 140px; margin-bottom: 20px; }
+        .contact-title { font-size: 1.5rem; font-weight: 900; text-transform: uppercase; border-bottom: 3px solid #000; padding-bottom: 10px; display: inline-block; }
 
+        .contact-list { display: flex; flex-direction: column; gap: 15px; }
         .contact-link {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 15px;
-            margin-bottom: 10px;
+            align-items: center;
+            padding: 15px 20px;
             background: #f9f9f9;
             border-radius: 12px;
             text-decoration: none;
@@ -184,36 +185,48 @@
             border: 2px solid transparent;
             transition: all 0.3s ease;
         }
-        .contact-link:hover { border-color: #000; transform: translateY(-3px); background: #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .contact-link strong { font-size: 1.1rem; font-weight: 800; display: flex; align-items: center; gap: 10px; }
-        .contact-link span { font-size: 0.95rem; color: #555; font-weight: 600; margin-top: 5px; padding-left: 30px; }
+        .contact-link:hover { border-color: #000; background: #fff; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+        
+        .icon-box {
+            width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            background: #000; color: #fff;
+            border-radius: 50%; margin-right: 15px; flex-shrink: 0;
+        }
+        .icon-box svg { width: 20px; height: 20px; fill: currentColor; }
+        
+        .contact-info { display: flex; flex-direction: column; }
+        .contact-info strong { font-size: 1.1rem; font-weight: 800; text-transform: uppercase; }
+        .contact-info span { font-size: 0.9rem; color: #666; font-weight: 600; margin-top: 2px; }
 
-        /* Səbət Elementləri */
-        .sidebar-title { font-size: 2rem; font-weight: 900; text-transform: uppercase; margin-bottom: 30px; border-bottom: 4px solid #000; padding-bottom: 10px; letter-spacing: -1px; }
+        /* --- SƏBƏT DİZAYNI --- */
+        .sidebar-title { font-size: 2rem; font-weight: 900; text-transform: uppercase; margin-bottom: 30px; border-bottom: 4px solid #000; padding-bottom: 10px; }
         .cart-items-container { flex-grow: 1; overflow-y: auto; margin-bottom: 20px; }
         .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #eee; }
-        .cart-item-info { flex-grow: 1; padding-right: 15px; }
+        .cart-item-info { flex-grow: 1; padding-right: 10px; }
         .cart-item-title { font-weight: 800; font-size: 1rem; margin-bottom: 5px; }
         .cart-item-desc { font-size: 0.85rem; color: #666; font-weight: 600; }
         .cart-item-price { font-weight: 900; font-size: 1.1rem; white-space: nowrap; }
-        .remove-item { color: #e60000; background: none; border: none; font-size: 1.5rem; cursor: pointer; font-weight: 900; padding: 0 5px; margin-left: 10px; }
+        .remove-item { color: #e60000; background: none; border: none; font-size: 1.5rem; cursor: pointer; font-weight: 900; margin-left: 10px; }
         .cart-total { font-size: 1.5rem; font-weight: 900; text-align: right; margin-bottom: 20px; text-transform: uppercase; }
         .checkout-btn { background: #25D366; color: #fff; border: none; padding: 18px; font-size: 1.2rem; font-weight: 900; text-transform: uppercase; cursor: pointer; width: 100%; border-radius: 50px; transition: all 0.3s; }
         .checkout-btn:hover { background: #1ebe5d; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(37,211,102,0.4); }
 
-        /* --- SLAYDER --- */
-        #sliderView { position: absolute; inset: 0; z-index: 10; transition: opacity 1s ease-in-out, transform 1s cubic-bezier(0.65, 0, 0.15, 1); }
+        /* --- SLAYDER (GİRİŞ) SƏHİFƏSİ --- */
+        #sliderView { position: absolute; top:0; left:0; width:100%; height:100%; z-index: 10; overflow: hidden; transition: opacity 1s ease-in-out, transform 1s cubic-bezier(0.65, 0, 0.15, 1); }
         .bg-layer { position: absolute; inset: 0; background-size: cover; background-position: center; transition: opacity 1.2s ease; z-index: 1; }
         #bg1 { opacity: 1; }
         #bg2 { opacity: 0; }
         .glass-overlay { position: absolute; inset: 0; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.85)); z-index: 2; }
-        .main-container { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        
+        .main-container { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; width: 100%; }
         .circle-positioner { position: relative; width: 60vh; height: 60vh; margin-top: -5vh; margin-bottom: 2vh; flex-shrink: 0; }
         .circle-spinner { width: 100%; height: 100%; border-radius: 50%; position: relative; transition: transform 1.2s cubic-bezier(0.65, 0, 0.15, 1); box-shadow: 0 15px 50px rgba(0,0,0,0.8); overflow: hidden; }
         .circle-slide { position: absolute; inset: 0; background-size: cover; background-position: center; border-radius: 50%; transition: opacity 1s ease-in-out; }
         #cSlide1 { opacity: 1; }
         #cSlide2 { opacity: 0; }
-        .content-container { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 40px; width: 100%; max-width: 900px; }
+        
+        .content-container { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 20px; width: 100%; max-width: 900px; }
         .text-content { transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); opacity: 1; transform: translateY(0); }
         .text-content.hidden { opacity: 0; transform: translateY(20px); }
         .content-container h1 { font-size: 3rem; color: #fff; font-weight: 900; margin-bottom: 15px; text-transform: uppercase; }
@@ -222,7 +235,7 @@
         .next-btn:hover { background-color: #000; color: #fff; }
 
         /* --- KATALOQ SƏHİFƏSİ --- */
-        #catalogView { position: absolute; top: 0; left: 0; right: 0; min-height: 100vh; background-color: #fff; color: #000; z-index: 5; opacity: 0; visibility: hidden; transform: translateY(50px); transition: opacity 1s ease, transform 1s cubic-bezier(0.65, 0, 0.15, 1); padding: 100px 5% 50px 5%; }
+        #catalogView { position: absolute; top: 0; left: 0; width: 100%; min-height: 100vh; background-color: #fff; color: #000; z-index: 5; opacity: 0; visibility: hidden; transform: translateY(50px); transition: opacity 1s ease, transform 1s cubic-bezier(0.65, 0, 0.15, 1); padding: 100px 5% 50px 5%; box-sizing: border-box; }
         body.catalog-active #sliderView { opacity: 0; transform: scale(1.05); pointer-events: none; }
         body.catalog-active #catalogView { opacity: 1; visibility: visible; transform: translateY(0); z-index: 20; }
         
@@ -231,21 +244,19 @@
         .catalog-header h2 { font-size: 3rem; font-weight: 900; letter-spacing: -1px; margin-bottom: 10px; text-transform: uppercase; }
         .catalog-header p { font-size: 1rem; font-weight: 600; color: #666; text-transform: uppercase;}
         
-        /* Kateqoriya Menyusu */
-        .category-menu { display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; margin-bottom: 60px; position: sticky; top: 10px; z-index: 100; padding: 10px 0; }
+        .category-menu { display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; margin-bottom: 60px; position: sticky; top: 10px; z-index: 100; padding: 10px 0; background: rgba(255,255,255,0.9); backdrop-filter: blur(5px); }
         .cat-btn { background: #f0f0f0; color: #000; border: 2px solid transparent; padding: 12px 25px; font-weight: 800; text-transform: uppercase; border-radius: 50px; cursor: pointer; transition: all 0.3s; font-size: 0.95rem; }
         .cat-btn:hover, .cat-btn.active { background: #000; color: #fff; border-color: #000; }
 
-        .category-section { margin-bottom: 70px; scroll-margin-top: 80px; }
+        .category-section { margin-bottom: 70px; scroll-margin-top: 100px; }
         .category-title { font-size: 2rem; font-weight: 900; text-transform: uppercase; border-bottom: 4px solid #000; padding-bottom: 10px; margin-bottom: 30px; display: inline-block; }
         
-        /* 2 Sıralı Grid */
+        /* 2 Sütunlu Məhsul Düzülüşü */
         .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; }
         
         .product-card { border: 2px solid #eee; padding: 20px; transition: border-color 0.3s ease; display: flex; flex-direction: column; background: #fff; border-radius: 12px; }
         .product-card:hover { border-color: #000; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         
-        /* Məhsul Şəkli */
         .product-img { width: 100%; height: 280px; object-fit: cover; border-radius: 8px; margin-bottom: 20px; background: #f9f9f9; }
 
         .prod-info { flex-grow: 1; }
@@ -274,17 +285,20 @@
         .cart-btn { background: #000; color: #fff; border: 2px solid #000; border-radius: 8px; padding: 15px; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: all 0.3s; width: 100%; }
         .cart-btn:hover { background: #fff; color: #000; }
 
-        /* Mobildə hər iki şərtə əməl edirik: Kataloq 2 sütunlu qalır, dizayn korlanmır */
         @media (max-width: 768px) {
             .circle-positioner { width: 100vw; height: 100vw; margin-top: -15vh; }
             .content-container h1 { font-size: 2rem; }
-            .product-grid { grid-template-columns: 1fr 1fr; gap: 15px; } /* Mobildə də 2 sıra */
-            .product-img { height: 160px; } /* Mobildə şəkillər bir az kiçilir */
+            .product-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .product-img { height: 160px; margin-bottom: 10px;}
+            .product-card { padding: 10px; }
             .prod-name { font-size: 1rem; }
+            .prod-desc { font-size: 0.8rem; margin-bottom: 10px; }
             .price-val { font-size: 1rem; }
+            .price-label { font-size: 0.65rem; }
+            .qty-wrapper { flex-direction: column; align-items: flex-start; gap: 5px; }
             .sidebar { width: 320px; }
             .floating-cart-btn { bottom: 20px; right: 20px; width: 60px; height: 60px; }
-            .cat-btn { padding: 10px 15px; font-size: 0.8rem; }
+            .cat-btn { padding: 8px 12px; font-size: 0.8rem; }
         }
     </style>
 </head>
@@ -293,7 +307,7 @@
     <!-- GİRİŞ LOQOSU -->
     <img src="167166.jpg" alt="Pura Thread" class="brand-logo" id="mainLogo">
 
-    <!-- HAMBURGER (ƏLAQƏ) DÜYMƏSİ -->
+    <!-- HAMBURGER DÜYMƏSİ (Kataloqda görünəcək) -->
     <div class="hamburger-btn" onclick="toggleContact()">
         <span></span><span></span><span></span>
     </div>
@@ -306,7 +320,7 @@
     <!-- OVERLAY -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeAllSidebars()"></div>
 
-    <!-- ƏLAQƏ SİDEBAR (Səliqəli Tərtibat) -->
+    <!-- ƏLAQƏ PANELİ -->
     <div class="sidebar" id="contactSidebar">
         <span class="close-sidebar" onclick="closeAllSidebars()">&times;</span>
         
@@ -315,21 +329,43 @@
             <h2 class="contact-title">Əlaqə</h2>
         </div>
 
-        <a href="https://wa.me/994554347619" target="_blank" class="contact-link">
-            <strong>📞 WhatsApp</strong>
-            <span>+994 55 434 76 19</span>
-        </a>
-        <a href="https://instagram.com/pura_thread" target="_blank" class="contact-link">
-            <strong>📷 Instagram</strong>
-            <span>pura_thread</span>
-        </a>
-        <a href="https://tiktok.com/@pura_thread" target="_blank" class="contact-link">
-            <strong>🎵 TikTok</strong>
-            <span>pura_thread</span>
-        </a>
+        <div class="contact-list">
+            <!-- WhatsApp -->
+            <a href="https://wa.me/994554347619" target="_blank" class="contact-link">
+                <div class="icon-box">
+                    <svg viewBox="0 0 24 24"><path d="M12.031 0C5.385 0 0 5.388 0 12.042c0 2.124.553 4.195 1.603 6.015L.175 23.361l5.441-1.428A11.968 11.968 0 0012.031 24c6.645 0 12.03-5.389 12.03-12.042C24.061 5.388 18.676 0 12.031 0zm-1.01 16.963l-2.12-.66c-1.14-.36-2.09-.91-2.95-1.63a7.28 7.28 0 01-2.45-5.26c0-2.31 1.05-4.48 2.87-5.91a8.33 8.33 0 015.65-2.02c4.13 0 7.49 3.36 7.49 7.49 0 4.13-3.36 7.49-7.49 7.49zm4.01-4.88c-.22-.11-1.28-.63-1.48-.7-.2-.07-.35-.11-.49.11-.14.22-.56.7-.68.85-.13.14-.26.16-.48.05-1.3-.64-2.22-1.28-3.04-2.73-.12-.22.06-.2.27-.61.07-.15.11-.29.17-.44.07-.15.03-.29-.02-.41-.06-.11-.49-1.19-.68-1.63-.18-.43-.37-.37-.49-.38-.11-.01-.25-.01-.38-.01s-.35.05-.53.25c-.18.2-1.02 1-1.02 2.45 0 1.45 1.04 2.86 1.18 3.05.14.2 2.05 3.12 4.96 4.38.7.3 1.25.48 1.67.62.7.23 1.34.2 1.84.12.56-.09 1.28-.52 1.46-1.03.18-.51.18-.95.13-1.03-.06-.08-.2-.13-.42-.24z"/></svg>
+                </div>
+                <div class="contact-info">
+                    <strong>WhatsApp</strong>
+                    <span>+994 55 434 76 19</span>
+                </div>
+            </a>
+            
+            <!-- Instagram -->
+            <a href="https://instagram.com/pura_thread" target="_blank" class="contact-link">
+                <div class="icon-box">
+                    <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                </div>
+                <div class="contact-info">
+                    <strong>Instagram</strong>
+                    <span>pura_thread</span>
+                </div>
+            </a>
+
+            <!-- TikTok -->
+            <a href="https://tiktok.com/@pura_thread" target="_blank" class="contact-link">
+                <div class="icon-box">
+                    <svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91.04.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 2.78-1.15 5.54-3.33 7.31-1.93 1.57-4.5 2.1-6.9 1.64-2.16-.41-4.04-1.62-5.18-3.48-1.15-1.89-1.46-4.28-.86-6.38.56-1.96 1.94-3.66 3.78-4.54 1.69-.8 3.65-1.03 5.48-.68v4.22c-1.16-.41-2.49-.33-3.56.28-.88.5-1.46 1.35-1.63 2.34-.17.97.04 1.99.64 2.78.6.8 1.55 1.28 2.56 1.3 1.06.02 2.1-.38 2.87-1.11.83-.8.88-2.02.88-3.13V.02z"/></svg>
+                </div>
+                <div class="contact-info">
+                    <strong>TikTok</strong>
+                    <span>pura_thread</span>
+                </div>
+            </a>
+        </div>
     </div>
 
-    <!-- SƏBƏT SİDEBAR -->
+    <!-- SƏBƏT PANELİ -->
     <div class="sidebar" id="cartSidebar">
         <span class="close-sidebar" onclick="closeAllSidebars()">&times;</span>
         <h2 class="sidebar-title">Səbətim</h2>
@@ -366,12 +402,11 @@
     <!-- === KATALOQ SƏHİFƏSİ === -->
     <div id="catalogView">
         <div class="catalog-header">
-            <img src="167166.jpg" alt="Pura Thread Logo" style="filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));">
+            <img src="167166.jpg" alt="Pura Thread Logo" style="filter: drop-shadow(0 2px 5px rgba(0,0,0,0.1));">
             <h2>Məhsullarımız</h2>
-            <p>BÜTÜN QİYMƏTLƏRƏ ƏDV DAXİLDİR. (Endirimlər avtomatik tətbiq edilir)</p>
+            <p>BÜTÜN QİYMƏTLƏRƏ ƏDV DAXİLDİR.</p>
         </div>
         
-        <!-- 3 Ayrı Kateqoriya Menyusu -->
         <div class="category-menu">
             <button class="cat-btn active" onclick="scrollToCat('cat-0', this)">Aksesuarlar</button>
             <button class="cat-btn" onclick="scrollToCat('cat-1', this)">Tekstil və Geyim</button>
@@ -390,7 +425,6 @@
             { title: "Kepka Üzərində Loqo", desc: "Kepkaların üzərinə şirkətinizin və ya brendinizin loqosunu yüksək dəqiqliklə tətbiq edirik.", img: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=1200&q=80" }
         ];
 
-        // Məhsullar üçün şəkillər və məlumatlar
         const productsData = [
             { categoryId: 0, category: "Aksesuarlar", items: [
                 { name: "Bandana", desc: "Standart", price: "7", naxis: "11", img: "https://images.unsplash.com/photo-1579621970222-7722955f0535?auto=format&fit=crop&w=600&q=80" },
@@ -400,7 +434,7 @@
                 { name: "Qalstuk", desc: "Standart", price: "17", naxis: "21", img: "https://images.unsplash.com/photo-1589756804561-12c8ff186b51?auto=format&fit=crop&w=600&q=80" },
                 { name: "Eko Çanta", desc: "Lacos, 65/35 ilkra qarışımlı", price: "14", naxis: "18", img: "https://images.unsplash.com/photo-1597484661643-2f5fef640df1?auto=format&fit=crop&w=600&q=80" }
             ]},
-            { categoryId: 1, category: "Tekstil və Geyim Məhsulları", items: [
+            { categoryId: 1, category: "Tekstil və Geyim", items: [
                 { name: "Bağça / Məktəbli", desc: "Uşaq tekstili", price: "11", naxis: "15", img: "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=600&q=80" },
                 { name: "T-shirt (Süprem)", desc: "Süprem (90% pambıq, likralı)", price: "21", naxis: "25", img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=80" },
                 { name: "T-shirt (2 iplik)", desc: "2 iplik (95% pambıq)", price: "21", naxis: "25", img: "https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=600&q=80" },
@@ -416,7 +450,7 @@
                 { name: "Önlük (Uzun)", desc: "Uzun biçimli önlük", price: "23", naxis: "27", img: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=600&q=80" },
                 { name: "Önlük (Qısa)", desc: "Qısa biçimli önlük", price: "19", naxis: "23", img: "https://images.unsplash.com/photo-1600609842340-90ff66041697?auto=format&fit=crop&w=600&q=80" }
             ]},
-            { categoryId: 2, category: "Xüsusi və İş Geyimləri", items: [
+            { categoryId: 2, category: "İş Geyimləri", items: [
                 { name: "Gödəkcə (Plaşoviy)", desc: "Plaşoviy material", price: "36", naxis: "40", img: "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=600&q=80" },
                 { name: "Uzunqol İş Köynəyi", desc: "80% pambıq, 20% polyester", price: "30", naxis: "34", img: "https://images.unsplash.com/photo-1596755094514-f87e32f85e2c?auto=format&fit=crop&w=600&q=80" },
                 { name: "Aşbaz Geyimi", desc: "Xüsusi aşpaz forması", price: "42", naxis: "46", img: "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=600&q=80" },
@@ -439,17 +473,19 @@
             renderCatalog();
         }
 
-        // Sidebar Funksiyaları
         function toggleContact() { document.getElementById('sidebarOverlay').classList.add('active'); document.getElementById('contactSidebar').classList.add('active'); }
         function toggleCart() { document.getElementById('sidebarOverlay').classList.add('active'); document.getElementById('cartSidebar').classList.add('active'); }
         function closeAllSidebars() { document.getElementById('sidebarOverlay').classList.remove('active'); document.getElementById('contactSidebar').classList.remove('active'); document.getElementById('cartSidebar').classList.remove('active'); }
 
-        // Kateqoriyaya Scroll
         function scrollToCat(id, btn) {
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             const el = document.getElementById(id);
-            if(el) el.scrollIntoView({ behavior: 'smooth' });
+            if(el) {
+                const yOffset = -80; 
+                const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                window.scrollTo({top: y, behavior: 'smooth'});
+            }
         }
 
         function renderCatalog() {
@@ -597,7 +633,7 @@
             if (currentIndex === slides.length - 1) {
                 document.documentElement.classList.add('scroll-active');
                 document.body.classList.add('catalog-active', 'scroll-active');
-                document.getElementById('mainLogo').style.display = 'none'; // Slayder loqosu itir
+                document.getElementById('mainLogo').style.opacity = '0';
                 setTimeout(() => { document.getElementById('sliderView').style.display = 'none'; }, 1000); 
                 return;
             }
