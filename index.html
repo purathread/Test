@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xüsusi Geyim və Çap Xidmətləri</title>
+    <title>Pura Thread - Geyim və Çap Xidmətləri</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800;900&display=swap');
 
@@ -12,6 +12,8 @@
             margin: 0;
             padding: 0;
         }
+
+        html { scroll-behavior: smooth; }
 
         html.scroll-active, body.scroll-active {
             overflow-y: auto !important;
@@ -26,7 +28,19 @@
             overflow: hidden; 
         }
 
-        /* --- UI ELEMENTLƏRİ: HAMBURGER VƏ SƏBƏT DÜYMƏSİ --- */
+        /* --- LOQO --- */
+        .brand-logo {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 999;
+            width: 150px;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+            transition: all 0.5s ease;
+        }
+
+        /* --- HAMBURGER DÜYMƏSİ --- */
         .hamburger-btn {
             position: fixed;
             top: 25px;
@@ -42,7 +56,11 @@
             justify-content: center;
             align-items: center;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: transform 0.3s ease;
+            /* Giriş səhifəsində gizlidir */
+            opacity: 0;
+            transform: translateX(-50px) rotate(-180deg);
+            pointer-events: none;
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
         .hamburger-btn:hover { transform: scale(1.1); }
         .hamburger-btn span {
@@ -54,6 +72,14 @@
             transition: 0.4s;
         }
 
+        /* Kataloq aktivləşdikdə çox axıcı şəkildə peyda olur */
+        body.catalog-active .hamburger-btn {
+            opacity: 1;
+            transform: translateX(0) rotate(0);
+            pointer-events: auto;
+        }
+
+        /* --- SƏBƏT DÜYMƏSİ --- */
         .floating-cart-btn {
             position: fixed;
             bottom: 30px;
@@ -72,9 +98,14 @@
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             font-size: 1.5rem;
             border: 3px solid #fff;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0);
+        }
+        body.catalog-active .floating-cart-btn {
+            opacity: 1; pointer-events: auto; transform: scale(1);
         }
         .floating-cart-btn:hover { transform: translateY(-5px) scale(1.05); }
-        
         .cart-badge {
             position: absolute;
             top: -5px;
@@ -92,7 +123,7 @@
             border: 2px solid #fff;
         }
 
-        /* --- SİDEBAR PANELS (ƏLAQƏ VƏ SƏBƏT) --- */
+        /* --- SİDEBAR VƏ ƏLAQƏ PANELİ --- */
         .sidebar-overlay {
             position: fixed;
             inset: 0;
@@ -120,11 +151,8 @@
             overflow-y: auto;
         }
 
-        /* Əlaqə Sol Tərəfdən Gəlir */
         #contactSidebar { left: 0; transform: translateX(-100%); }
         #contactSidebar.active { transform: translateX(0); }
-
-        /* Səbət Sağ Tərəfdən Gəlir */
         #cartSidebar { right: 0; transform: translateX(100%); }
         #cartSidebar.active { transform: translateX(0); }
 
@@ -138,75 +166,49 @@
             font-weight: 800;
         }
 
-        .sidebar-title {
-            font-size: 2rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            margin-bottom: 30px;
-            border-bottom: 4px solid #000;
-            padding-bottom: 10px;
-            letter-spacing: -1px;
-        }
+        /* Əlaqə Səliqəli Tərtibat */
+        .contact-header { text-align: center; margin-bottom: 30px; }
+        .contact-header img { width: 120px; margin-bottom: 15px; }
+        .contact-title { font-size: 1.5rem; font-weight: 900; text-transform: uppercase; border-bottom: 3px solid #eee; padding-bottom: 15px; }
 
-        /* Əlaqə Linkləri */
         .contact-link {
             display: flex;
-            align-items: center;
-            padding: 15px 0;
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: #000;
+            flex-direction: column;
+            justify-content: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f9f9f9;
+            border-radius: 12px;
             text-decoration: none;
-            border-bottom: 1px solid #eee;
-            transition: padding-left 0.3s;
+            color: #000;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
         }
-        .contact-link:hover { padding-left: 10px; color: #666; }
+        .contact-link:hover { border-color: #000; transform: translateY(-3px); background: #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .contact-link strong { font-size: 1.1rem; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        .contact-link span { font-size: 0.95rem; color: #555; font-weight: 600; margin-top: 5px; padding-left: 30px; }
 
         /* Səbət Elementləri */
+        .sidebar-title { font-size: 2rem; font-weight: 900; text-transform: uppercase; margin-bottom: 30px; border-bottom: 4px solid #000; padding-bottom: 10px; letter-spacing: -1px; }
         .cart-items-container { flex-grow: 1; overflow-y: auto; margin-bottom: 20px; }
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid #eee;
-        }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #eee; }
         .cart-item-info { flex-grow: 1; padding-right: 15px; }
-        .cart-item-title { font-weight: 800; font-size: 1.1rem; line-height: 1.2; margin-bottom: 5px; }
-        .cart-item-desc { font-size: 0.9rem; color: #666; font-weight: 600; }
+        .cart-item-title { font-weight: 800; font-size: 1rem; margin-bottom: 5px; }
+        .cart-item-desc { font-size: 0.85rem; color: #666; font-weight: 600; }
         .cart-item-price { font-weight: 900; font-size: 1.1rem; white-space: nowrap; }
         .remove-item { color: #e60000; background: none; border: none; font-size: 1.5rem; cursor: pointer; font-weight: 900; padding: 0 5px; margin-left: 10px; }
-
         .cart-total { font-size: 1.5rem; font-weight: 900; text-align: right; margin-bottom: 20px; text-transform: uppercase; }
-        
-        .checkout-btn {
-            background: #25D366; /* WhatsApp rəngi */
-            color: #fff;
-            border: none;
-            padding: 18px;
-            font-size: 1.2rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            cursor: pointer;
-            width: 100%;
-            border-radius: 50px;
-            transition: all 0.3s;
-        }
+        .checkout-btn { background: #25D366; color: #fff; border: none; padding: 18px; font-size: 1.2rem; font-weight: 900; text-transform: uppercase; cursor: pointer; width: 100%; border-radius: 50px; transition: all 0.3s; }
         .checkout-btn:hover { background: #1ebe5d; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(37,211,102,0.4); }
 
-        /* --- SLAYDER (Köhnə Səhifə) --- */
-        #sliderView {
-            position: absolute;
-            inset: 0;
-            z-index: 10;
-            transition: opacity 1s ease-in-out, transform 1s cubic-bezier(0.65, 0, 0.15, 1);
-        }
+        /* --- SLAYDER --- */
+        #sliderView { position: absolute; inset: 0; z-index: 10; transition: opacity 1s ease-in-out, transform 1s cubic-bezier(0.65, 0, 0.15, 1); }
         .bg-layer { position: absolute; inset: 0; background-size: cover; background-position: center; transition: opacity 1.2s ease; z-index: 1; }
         #bg1 { opacity: 1; }
         #bg2 { opacity: 0; }
         .glass-overlay { position: absolute; inset: 0; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.85)); z-index: 2; }
         .main-container { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
-        .circle-positioner { position: relative; width: 60vh; height: 60vh; margin-top: -10vh; margin-bottom: 2vh; flex-shrink: 0; }
+        .circle-positioner { position: relative; width: 60vh; height: 60vh; margin-top: -5vh; margin-bottom: 2vh; flex-shrink: 0; }
         .circle-spinner { width: 100%; height: 100%; border-radius: 50%; position: relative; transition: transform 1.2s cubic-bezier(0.65, 0, 0.15, 1); box-shadow: 0 15px 50px rgba(0,0,0,0.8); overflow: hidden; }
         .circle-slide { position: absolute; inset: 0; background-size: cover; background-position: center; border-radius: 50%; transition: opacity 1s ease-in-out; }
         #cSlide1 { opacity: 1; }
@@ -219,37 +221,48 @@
         .next-btn { margin-top: 25px; padding: 15px 40px; background-color: #fff; color: #000; border: 2px solid #fff; border-radius: 50px; font-size: 1.1rem; font-weight: 800; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; }
         .next-btn:hover { background-color: #000; color: #fff; }
 
-        /* --- KATALOQ SƏHİFƏSİ (Adidas Üslubu) --- */
-        #catalogView { position: absolute; top: 0; left: 0; right: 0; min-height: 100vh; background-color: #fff; color: #000; z-index: 5; opacity: 0; visibility: hidden; transform: translateY(50px); transition: opacity 1s ease, transform 1s cubic-bezier(0.65, 0, 0.15, 1); padding: 80px 5%; }
+        /* --- KATALOQ SƏHİFƏSİ --- */
+        #catalogView { position: absolute; top: 0; left: 0; right: 0; min-height: 100vh; background-color: #fff; color: #000; z-index: 5; opacity: 0; visibility: hidden; transform: translateY(50px); transition: opacity 1s ease, transform 1s cubic-bezier(0.65, 0, 0.15, 1); padding: 100px 5% 50px 5%; }
         body.catalog-active #sliderView { opacity: 0; transform: scale(1.05); pointer-events: none; }
         body.catalog-active #catalogView { opacity: 1; visibility: visible; transform: translateY(0); z-index: 20; }
         
-        .catalog-header { text-align: center; margin-bottom: 60px; text-transform: uppercase; }
-        .catalog-header h2 { font-size: 3.5rem; font-weight: 900; letter-spacing: -2px; margin-bottom: 10px; }
-        .catalog-header p { font-size: 1rem; font-weight: 600; color: #666; }
+        .catalog-header { text-align: center; margin-bottom: 40px; }
+        .catalog-header img { width: 150px; margin-bottom: 20px; }
+        .catalog-header h2 { font-size: 3rem; font-weight: 900; letter-spacing: -1px; margin-bottom: 10px; text-transform: uppercase; }
+        .catalog-header p { font-size: 1rem; font-weight: 600; color: #666; text-transform: uppercase;}
         
-        .category-section { margin-bottom: 70px; }
+        /* Kateqoriya Menyusu */
+        .category-menu { display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; margin-bottom: 60px; position: sticky; top: 10px; z-index: 100; padding: 10px 0; }
+        .cat-btn { background: #f0f0f0; color: #000; border: 2px solid transparent; padding: 12px 25px; font-weight: 800; text-transform: uppercase; border-radius: 50px; cursor: pointer; transition: all 0.3s; font-size: 0.95rem; }
+        .cat-btn:hover, .cat-btn.active { background: #000; color: #fff; border-color: #000; }
+
+        .category-section { margin-bottom: 70px; scroll-margin-top: 80px; }
         .category-title { font-size: 2rem; font-weight: 900; text-transform: uppercase; border-bottom: 4px solid #000; padding-bottom: 10px; margin-bottom: 30px; display: inline-block; }
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
         
-        .product-card { border: 2px solid #eee; padding: 25px; transition: border-color 0.3s ease; display: flex; flex-direction: column; background: #fff;}
-        .product-card:hover { border-color: #000; }
+        /* 2 Sıralı Grid */
+        .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; }
+        
+        .product-card { border: 2px solid #eee; padding: 20px; transition: border-color 0.3s ease; display: flex; flex-direction: column; background: #fff; border-radius: 12px; }
+        .product-card:hover { border-color: #000; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        
+        /* Məhsul Şəkli */
+        .product-img { width: 100%; height: 280px; object-fit: cover; border-radius: 8px; margin-bottom: 20px; background: #f9f9f9; }
+
         .prod-info { flex-grow: 1; }
-        .prod-name { font-size: 1.3rem; font-weight: 900; text-transform: uppercase; margin-bottom: 8px; }
+        .prod-name { font-size: 1.3rem; font-weight: 900; text-transform: uppercase; margin-bottom: 8px; line-height: 1.2; }
         .prod-desc { font-size: 0.95rem; color: #666; margin-bottom: 20px; font-weight: 600; }
 
-        /* Növ Seçimi (Sadə / Naxışlı) */
-        .type-selector { width: 100%; padding: 10px; margin-bottom: 15px; font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 0.95rem; text-transform: uppercase; border: 2px solid #eee; outline: none; cursor: pointer; }
+        .type-selector { width: 100%; padding: 12px; margin-bottom: 15px; font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; border: 2px solid #eee; border-radius: 8px; outline: none; cursor: pointer; }
         .type-selector:focus { border-color: #000; }
 
         .qty-wrapper { margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; }
         .qty-label { font-weight: 800; text-transform: uppercase; font-size: 0.9rem; }
-        .qty-controls { display: flex; align-items: center; border: 2px solid #000; }
+        .qty-controls { display: flex; align-items: center; border: 2px solid #000; border-radius: 8px; overflow: hidden; }
         .qty-controls button { background: #fff; color: #000; border: none; width: 35px; height: 35px; font-size: 1.2rem; font-weight: 900; cursor: pointer; transition: 0.2s; }
         .qty-controls button:hover { background: #000; color: #fff; }
         .qty-val { font-weight: 900; width: 40px; text-align: center; }
 
-        .discount-badge { background: #e60000; color: #fff; padding: 5px 10px; font-weight: 800; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 15px; display: none; text-align: center; }
+        .discount-badge { background: #e60000; color: #fff; padding: 5px 10px; font-weight: 800; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 15px; display: none; text-align: center; border-radius: 5px; }
         
         .price-box { display: flex; justify-content: space-between; align-items: center; padding-top: 15px; border-top: 2px solid #eee; margin-bottom: 20px; }
         .price-item { display: flex; flex-direction: column; }
@@ -258,43 +271,62 @@
         .price-item.naxis { text-align: right; }
         .has-discount { color: #e60000; }
 
-        .cart-btn { background: #000; color: #fff; border: 2px solid #000; padding: 15px; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: all 0.3s; width: 100%; }
+        .cart-btn { background: #000; color: #fff; border: 2px solid #000; border-radius: 8px; padding: 15px; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: all 0.3s; width: 100%; }
         .cart-btn:hover { background: #fff; color: #000; }
 
+        /* Mobildə hər iki şərtə əməl edirik: Kataloq 2 sütunlu qalır, dizayn korlanmır */
         @media (max-width: 768px) {
-            .circle-positioner { width: 100vw; height: 100vw; margin-top: -20vh; }
+            .circle-positioner { width: 100vw; height: 100vw; margin-top: -15vh; }
             .content-container h1 { font-size: 2rem; }
-            .catalog-header h2 { font-size: 2.2rem; }
-            .category-title { font-size: 1.5rem; }
-            .product-grid { grid-template-columns: 1fr; }
-            .sidebar { width: 300px; }
+            .product-grid { grid-template-columns: 1fr 1fr; gap: 15px; } /* Mobildə də 2 sıra */
+            .product-img { height: 160px; } /* Mobildə şəkillər bir az kiçilir */
+            .prod-name { font-size: 1rem; }
+            .price-val { font-size: 1rem; }
+            .sidebar { width: 320px; }
             .floating-cart-btn { bottom: 20px; right: 20px; width: 60px; height: 60px; }
+            .cat-btn { padding: 10px 15px; font-size: 0.8rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- YUXARI SOL HAMBURGER (Əlaqə) -->
+    <!-- GİRİŞ LOQOSU -->
+    <img src="167166.jpg" alt="Pura Thread" class="brand-logo" id="mainLogo">
+
+    <!-- HAMBURGER (ƏLAQƏ) DÜYMƏSİ -->
     <div class="hamburger-btn" onclick="toggleContact()">
         <span></span><span></span><span></span>
     </div>
 
-    <!-- AŞAĞI SAĞ SƏBƏT (Gözləmə) -->
+    <!-- SƏBƏT DÜYMƏSİ -->
     <div class="floating-cart-btn" onclick="toggleCart()">
-        🛒
-        <div class="cart-badge" id="cartBadge">0</div>
+        🛒<div class="cart-badge" id="cartBadge">0</div>
     </div>
 
-    <!-- QARALAN ARXA PLAN OVERLAY -->
+    <!-- OVERLAY -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeAllSidebars()"></div>
 
-    <!-- ƏLAQƏ SİDEBAR -->
+    <!-- ƏLAQƏ SİDEBAR (Səliqəli Tərtibat) -->
     <div class="sidebar" id="contactSidebar">
         <span class="close-sidebar" onclick="closeAllSidebars()">&times;</span>
-        <h2 class="sidebar-title">Əlaqə</h2>
-        <a href="https://wa.me/994554347619" target="_blank" class="contact-link">📞 WhatsApp (+994 55 434 76 19)</a>
-        <a href="https://instagram.com/pura_thread" target="_blank" class="contact-link">📷 Instagram (pura_thread)</a>
-        <a href="https://tiktok.com/@pura_thread" target="_blank" class="contact-link">🎵 TikTok (pura_thread)</a>
+        
+        <div class="contact-header">
+            <img src="167166.jpg" alt="Pura Thread Logo">
+            <h2 class="contact-title">Əlaqə</h2>
+        </div>
+
+        <a href="https://wa.me/994554347619" target="_blank" class="contact-link">
+            <strong>📞 WhatsApp</strong>
+            <span>+994 55 434 76 19</span>
+        </a>
+        <a href="https://instagram.com/pura_thread" target="_blank" class="contact-link">
+            <strong>📷 Instagram</strong>
+            <span>pura_thread</span>
+        </a>
+        <a href="https://tiktok.com/@pura_thread" target="_blank" class="contact-link">
+            <strong>🎵 TikTok</strong>
+            <span>pura_thread</span>
+        </a>
     </div>
 
     <!-- SƏBƏT SİDEBAR -->
@@ -321,7 +353,6 @@
                     <div class="circle-slide" id="cSlide2"></div>
                 </div>
             </div>
-
             <div class="content-container">
                 <div class="text-content" id="textContent">
                     <h1 id="title"></h1>
@@ -335,9 +366,18 @@
     <!-- === KATALOQ SƏHİFƏSİ === -->
     <div id="catalogView">
         <div class="catalog-header">
+            <img src="167166.jpg" alt="Pura Thread Logo" style="filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));">
             <h2>Məhsullarımız</h2>
-            <p>BÜTÜN QİYMƏTLƏRƏ ƏDV DAXİLDİR. (Endirimlər say artdıqca tətbiq edilir)</p>
+            <p>BÜTÜN QİYMƏTLƏRƏ ƏDV DAXİLDİR. (Endirimlər avtomatik tətbiq edilir)</p>
         </div>
+        
+        <!-- 3 Ayrı Kateqoriya Menyusu -->
+        <div class="category-menu">
+            <button class="cat-btn active" onclick="scrollToCat('cat-0', this)">Aksesuarlar</button>
+            <button class="cat-btn" onclick="scrollToCat('cat-1', this)">Tekstil və Geyim</button>
+            <button class="cat-btn" onclick="scrollToCat('cat-2', this)">İş Geyimləri</button>
+        </div>
+
         <div id="catalogContent"></div>
     </div>
 
@@ -350,55 +390,44 @@
             { title: "Kepka Üzərində Loqo", desc: "Kepkaların üzərinə şirkətinizin və ya brendinizin loqosunu yüksək dəqiqliklə tətbiq edirik.", img: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=1200&q=80" }
         ];
 
+        // Məhsullar üçün şəkillər və məlumatlar
         const productsData = [
             { categoryId: 0, category: "Aksesuarlar", items: [
-                { name: "Bandana", desc: "Standart", price: "7", naxis: "11" },
-                { name: "Şərf", desc: "Standart", price: "11", naxis: "15" },
-                { name: "Kepka (Cırtlı)", desc: "Standart / Cırt bərkitməli", price: "15", naxis: "19" },
-                { name: "Kepka (Dəmirli)", desc: "Dəmir toqqalı bərkitmə", price: "11", naxis: "15" },
-                { name: "Qalstuk", desc: "Standart", price: "17", naxis: "21" },
-                { name: "Eko Çanta", desc: "Lacos, 65/35 ilkra qarışımlı", price: "14", naxis: "18" }
+                { name: "Bandana", desc: "Standart", price: "7", naxis: "11", img: "https://images.unsplash.com/photo-1579621970222-7722955f0535?auto=format&fit=crop&w=600&q=80" },
+                { name: "Şərf", desc: "Standart", price: "11", naxis: "15", img: "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?auto=format&fit=crop&w=600&q=80" },
+                { name: "Kepka (Cırtlı)", desc: "Standart / Cırt bərkitməli", price: "15", naxis: "19", img: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=600&q=80" },
+                { name: "Kepka (Dəmirli)", desc: "Dəmir toqqalı bərkitmə", price: "11", naxis: "15", img: "https://images.unsplash.com/photo-1576871337632-b9aef4c17ab9?auto=format&fit=crop&w=600&q=80" },
+                { name: "Qalstuk", desc: "Standart", price: "17", naxis: "21", img: "https://images.unsplash.com/photo-1589756804561-12c8ff186b51?auto=format&fit=crop&w=600&q=80" },
+                { name: "Eko Çanta", desc: "Lacos, 65/35 ilkra qarışımlı", price: "14", naxis: "18", img: "https://images.unsplash.com/photo-1597484661643-2f5fef640df1?auto=format&fit=crop&w=600&q=80" }
             ]},
             { categoryId: 1, category: "Tekstil və Geyim Məhsulları", items: [
-                { name: "Bağça / Məktəbli Geyimi", desc: "Uşaq tekstili", price: "11", naxis: "15" },
-                { name: "T-shirt (Süprem)", desc: "Süprem (90% pambıq, likralı)", price: "21", naxis: "25" },
-                { name: "T-shirt (2 iplik)", desc: "2 iplik (95% pambıq)", price: "21", naxis: "25" },
-                { name: "Polo T-shirt (Lacos)", desc: "Lacos, 65/35 ilkra qarışımlı", price: "21", naxis: "25" },
-                { name: "Polo T-shirt (2 iplik)", desc: "2 iplik (95% pambıq)", price: "21", naxis: "25" },
-                { name: "Polo Sweater (Lacos)", desc: "Lacos, 65/35 ilkra qarışımlı", price: "23", naxis: "27" },
-                { name: "Polo Sweater (2 iplik)", desc: "2 iplik (95% pambıq)", price: "23", naxis: "27" },
-                { name: "Polo Sweater (3 iplik)", desc: "3 iplik (95% pambıq)", price: "23", naxis: "27" },
-                { name: "Sweater (Lacos)", desc: "Lacos, 65/35 ilkra qarışımlı", price: "21", naxis: "25" },
-                { name: "Sweater (2 iplik)", desc: "2 iplik (90-95% pambıq)", price: "23", naxis: "27" },
-                { name: "Sweater (3 iplik)", desc: "3 iplik (90-95% pambıq)", price: "25", naxis: "29" },
-                { name: "Sweater (Yarımzamok, 2 iplik)", desc: "2 iplik (95% pambıq)", price: "25", naxis: "29" },
-                { name: "Sweater (Yarımzamok, 3 iplik)", desc: "3 iplik (95% pambıq)", price: "27", naxis: "31" },
-                { name: "Sweater (Zamoklu, 2 iplik)", desc: "2 iplik (95% pambıq)", price: "28", naxis: "32" },
-                { name: "Sweater (Zamoklu, 3 iplik)", desc: "3 iplik (95% pambıq)", price: "30", naxis: "34" },
-                { name: "Hoodie (2 iplik)", desc: "2 iplik (90-95% pambıq)", price: "25", naxis: "29" },
-                { name: "Hoodie (3 iplik)", desc: "3 iplik (90-95% pambıq)", price: "27", naxis: "31" },
-                { name: "Hoodie (Zamoklu, 2 iplik)", desc: "2 iplik (90-95% pambıq)", price: "28", naxis: "32" },
-                { name: "Hoodie (Zamoklu, 3 iplik)", desc: "3 iplik (90-95% pambıq)", price: "30", naxis: "34" },
-                { name: "Şalvar (2 iplik)", desc: "2 iplik (95% pambıq)", price: "26", naxis: "30" },
-                { name: "Şalvar (3 iplik)", desc: "3 iplik (95% pambıq)", price: "28", naxis: "32" },
-                { name: "Önlük (Uzun)", desc: "Uzun biçimli önlük", price: "23", naxis: "27" },
-                { name: "Önlük (Qısa)", desc: "Qısa biçimli önlük", price: "19", naxis: "23" }
+                { name: "Bağça / Məktəbli", desc: "Uşaq tekstili", price: "11", naxis: "15", img: "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=600&q=80" },
+                { name: "T-shirt (Süprem)", desc: "Süprem (90% pambıq, likralı)", price: "21", naxis: "25", img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=80" },
+                { name: "T-shirt (2 iplik)", desc: "2 iplik (95% pambıq)", price: "21", naxis: "25", img: "https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=600&q=80" },
+                { name: "Polo (Lacos)", desc: "Lacos, 65/35 ilkra qarışımlı", price: "21", naxis: "25", img: "https://images.unsplash.com/photo-1628148906103-68f44d85834d?auto=format&fit=crop&w=600&q=80" },
+                { name: "Polo (2 iplik)", desc: "2 iplik (95% pambıq)", price: "21", naxis: "25", img: "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?auto=format&fit=crop&w=600&q=80" },
+                { name: "Sweater Polo", desc: "Lacos, 65/35 qarışımlı", price: "23", naxis: "27", img: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=600&q=80" },
+                { name: "Sweater (2 iplik)", desc: "2 iplik (90-95% pambıq)", price: "23", naxis: "27", img: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=600&q=80" },
+                { name: "Sweater (3 iplik)", desc: "3 iplik (90-95% pambıq)", price: "25", naxis: "29", img: "https://images.unsplash.com/photo-1614975059251-992f11792b9f?auto=format&fit=crop&w=600&q=80" },
+                { name: "Hoodie (2 iplik)", desc: "2 iplik (90-95% pambıq)", price: "25", naxis: "29", img: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=600&q=80" },
+                { name: "Hoodie (Zamoklu)", desc: "2 iplik (90-95% pambıq)", price: "28", naxis: "32", img: "https://images.unsplash.com/photo-1509942774463-acf339cf87d5?auto=format&fit=crop&w=600&q=80" },
+                { name: "Şalvar (2 iplik)", desc: "2 iplik (95% pambıq)", price: "26", naxis: "30", img: "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=600&q=80" },
+                { name: "Şalvar (3 iplik)", desc: "3 iplik (95% pambıq)", price: "28", naxis: "32", img: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=600&q=80" },
+                { name: "Önlük (Uzun)", desc: "Uzun biçimli önlük", price: "23", naxis: "27", img: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=600&q=80" },
+                { name: "Önlük (Qısa)", desc: "Qısa biçimli önlük", price: "19", naxis: "23", img: "https://images.unsplash.com/photo-1600609842340-90ff66041697?auto=format&fit=crop&w=600&q=80" }
             ]},
             { categoryId: 2, category: "Xüsusi və İş Geyimləri", items: [
-                { name: "Gödəkcə (Plaşoviy)", desc: "Plaşoviy material", price: "36", naxis: "40" },
-                { name: "Gödəkcə (Təytis parça)", desc: "Təytis parça", price: "38", naxis: "42" },
-                { name: "Uzunqol İş Köynəyi", desc: "80% pambıq, 20% polyester", price: "30", naxis: "34" },
-                { name: "Aşbaz Geyimi", desc: "Xüsusi aşpaz forması", price: "42", naxis: "46" },
-                { name: "Xadimə Geyimi", desc: "Xidmətçi forması", price: "37", naxis: "41" },
-                { name: "Tibbi Xalat (Qısaqol)", desc: "Qısaqol tibbi geyim", price: "36", naxis: "40" },
-                { name: "Tibbi Xalat (Uzunqol)", desc: "Uzunqol tibbi geyim", price: "40", naxis: "44" },
-                { name: "Məzun Geyimi (Atlas parça)", desc: "Atlas parça mantiya", price: "31", naxis: "35" },
-                { name: "Məzun Geyimi (Mat parça)", desc: "Mat parça mantiya", price: "35", naxis: "39" },
-                { name: "Təhlükəsizlik Jileti", desc: "Zamoklu reflektorlu jilet", price: "20", naxis: "24" }
+                { name: "Gödəkcə (Plaşoviy)", desc: "Plaşoviy material", price: "36", naxis: "40", img: "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=600&q=80" },
+                { name: "Uzunqol İş Köynəyi", desc: "80% pambıq, 20% polyester", price: "30", naxis: "34", img: "https://images.unsplash.com/photo-1596755094514-f87e32f85e2c?auto=format&fit=crop&w=600&q=80" },
+                { name: "Aşbaz Geyimi", desc: "Xüsusi aşpaz forması", price: "42", naxis: "46", img: "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=600&q=80" },
+                { name: "Xadimə Geyimi", desc: "Xidmətçi forması", price: "37", naxis: "41", img: "https://images.unsplash.com/photo-1584988647573-04dcdd60f9e2?auto=format&fit=crop&w=600&q=80" },
+                { name: "Tibbi Xalat", desc: "Qısa/Uzun tibbi geyim", price: "36", naxis: "40", img: "https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&w=600&q=80" },
+                { name: "Məzun Geyimi", desc: "Atlas/Mat parça mantiya", price: "31", naxis: "35", img: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=600&q=80" },
+                { name: "Təhlükəsizlik Jileti", desc: "Zamoklu reflektorlu", price: "20", naxis: "24", img: "https://images.unsplash.com/photo-1589410976150-f1ce6ccabdb4?auto=format&fit=crop&w=600&q=80" }
             ]}
         ];
 
-        let cart = []; // Səbət məlumatları
+        let cart = [];
         let currentIndex = 0, currentRotation = 0, isAnimating = false;
         let activeBg = 1, activeSlideLayer = 1;
 
@@ -410,40 +439,36 @@
             renderCatalog();
         }
 
-        // --- SİDEBAR VƏ HAMBURGER MƏNTİQİ ---
-        function toggleContact() {
-            document.getElementById('sidebarOverlay').classList.add('active');
-            document.getElementById('contactSidebar').classList.add('active');
-        }
-        function toggleCart() {
-            document.getElementById('sidebarOverlay').classList.add('active');
-            document.getElementById('cartSidebar').classList.add('active');
-        }
-        function closeAllSidebars() {
-            document.getElementById('sidebarOverlay').classList.remove('active');
-            document.getElementById('contactSidebar').classList.remove('active');
-            document.getElementById('cartSidebar').classList.remove('active');
+        // Sidebar Funksiyaları
+        function toggleContact() { document.getElementById('sidebarOverlay').classList.add('active'); document.getElementById('contactSidebar').classList.add('active'); }
+        function toggleCart() { document.getElementById('sidebarOverlay').classList.add('active'); document.getElementById('cartSidebar').classList.add('active'); }
+        function closeAllSidebars() { document.getElementById('sidebarOverlay').classList.remove('active'); document.getElementById('contactSidebar').classList.remove('active'); document.getElementById('cartSidebar').classList.remove('active'); }
+
+        // Kateqoriyaya Scroll
+        function scrollToCat(id, btn) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const el = document.getElementById(id);
+            if(el) el.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // --- KATALOQ VƏ SƏBƏT MƏNTİQİ ---
         function renderCatalog() {
             const container = document.getElementById('catalogContent');
             let html = '';
             productsData.forEach(cat => {
-                html += `<div class="category-section"><div class="category-title">${cat.category}</div><div class="product-grid">`;
+                html += `<div class="category-section" id="cat-${cat.categoryId}"><div class="category-title">${cat.category}</div><div class="product-grid">`;
                 cat.items.forEach(item => {
                     html += `
                         <div class="product-card" data-cat="${cat.categoryId}" data-price="${item.price}" data-naxis="${item.naxis}" data-fsade="${item.price}" data-fnaxis="${item.naxis}">
+                            <img src="${item.img}" alt="${item.name}" class="product-img">
                             <div class="prod-info">
                                 <div class="prod-name">${item.name}</div>
                                 <div class="prod-desc">${item.desc}</div>
                             </div>
-                            
                             <select class="type-selector">
                                 <option value="sade">Növ: Sadə Çap</option>
                                 <option value="naxis">Növ: Naxış Toxuma</option>
                             </select>
-
                             <div class="qty-wrapper">
                                 <span class="qty-label">Miqdar:</span>
                                 <div class="qty-controls">
@@ -483,10 +508,8 @@
             if (qty >= 15 && (catIdx === 1 || catIdx === 2)) discount = 3;
             if (qty >= 20 && catIdx === 1) discount = 4;
 
-            // Vahid qiymətləri hesablayıb yadda saxlayırıq (səbətə atanda istifadə etmək üçün)
             const unitS = Math.max(0, baseS - discount);
             const unitN = Math.max(0, baseN - discount);
-            
             card.setAttribute('data-fsade', unitS);
             card.setAttribute('data-fnaxis', unitN);
 
@@ -500,12 +523,10 @@
             if (discount > 0) {
                 badge.innerText = `Hər məhsula ${discount} AZN endirim!`;
                 badge.style.display = "block";
-                valS.classList.add('has-discount');
-                valN.classList.add('has-discount');
+                valS.classList.add('has-discount'); valN.classList.add('has-discount');
             } else {
                 badge.style.display = "none";
-                valS.classList.remove('has-discount');
-                valN.classList.remove('has-discount');
+                valS.classList.remove('has-discount'); valN.classList.remove('has-discount');
             }
         }
 
@@ -521,7 +542,6 @@
 
             cart.push({ name, typeName, qty, unitPrice, totalPrice });
             
-            // Vizual Bildiriş
             btn.innerText = "✓ ƏLAVƏ EDİLDİ";
             btn.style.background = "#25D366";
             btn.style.borderColor = "#25D366";
@@ -530,10 +550,7 @@
             refreshCartUI();
         }
 
-        function removeFromCart(index) {
-            cart.splice(index, 1);
-            refreshCartUI();
-        }
+        function removeFromCart(index) { cart.splice(index, 1); refreshCartUI(); }
 
         function refreshCartUI() {
             const cartBody = document.getElementById('cartItems');
@@ -564,10 +581,7 @@
         }
 
         function checkout() {
-            if(cart.length === 0) {
-                alert("Sifariş vermək üçün səbətə məhsul əlavə edin.");
-                return;
-            }
+            if(cart.length === 0) { alert("Sifariş vermək üçün səbətə məhsul əlavə edin."); return; }
             let text = "Salam, mən saytınızdan aşağıdakı məhsulları sifariş vermək istəyirəm:%0A%0A";
             let total = 0;
             cart.forEach((item, i) => {
@@ -575,16 +589,15 @@
                 total += item.totalPrice;
             });
             text += `*ÜMUMİ MƏBLƏĞ: ${total} AZN*`;
-            
             window.open(`https://wa.me/994554347619?text=${text}`, '_blank');
         }
 
-        // --- SLAYD KEÇİD ANIMASİYASI ---
         function nextAction() {
             if (isAnimating) return;
             if (currentIndex === slides.length - 1) {
                 document.documentElement.classList.add('scroll-active');
                 document.body.classList.add('catalog-active', 'scroll-active');
+                document.getElementById('mainLogo').style.display = 'none'; // Slayder loqosu itir
                 setTimeout(() => { document.getElementById('sliderView').style.display = 'none'; }, 1000); 
                 return;
             }
