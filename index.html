@@ -21,16 +21,14 @@
             background-color: #000;
         }
 
-        /* Çərçivə xətasını həll edən Arxa Plan Qatları */
+        /* ÇƏRÇİVƏ PROBLEMİNİ HƏLL EDƏN QAT (130% böyüklükdədir ki, ləkələr ekrana düşməsin) */
         .bg-layer {
             position: absolute;
-            top: 0; left: 0; 
-            width: 100vw; height: 100vh;
+            top: -15%; left: -15%; 
+            width: 130%; height: 130%;
             background-size: cover;
             background-position: center;
-            filter: blur(35px);
-            /* Transform scale ilə kənarlardakı ləkələri ekranın çölünə atırıq */
-            transform: scale(1.25);
+            filter: blur(40px);
             transition: opacity 1.2s ease-in-out;
             z-index: 1;
         }
@@ -38,45 +36,47 @@
         #bg1 { opacity: 1; }
         #bg2 { opacity: 0; }
 
-        /* Arxa planı tündləşdiririk ki, mətn tam oxunaqlı olsun */
+        /* Arxa planın üzərinə yüngül tünd qat */
         .overlay-dark {
             position: absolute;
             inset: 0;
-            background: linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8));
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.85));
             z-index: 2;
         }
 
+        /* ƏSAS DÜZÜLÜŞ (Yuxarıdan aşağı) */
         .main-container {
             position: relative;
             z-index: 3;
             display: flex;
-            height: 100%;
+            flex-direction: column;
             align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
             overflow: hidden;
         }
 
-        /* Dairənin Mövqeyi */
+        /* Dairə yuxarıda */
         .circle-positioner {
-            position: absolute;
-            width: 80vh;
-            height: 80vh;
-            left: -40vh; /* Ekranın sol kənarında yarısı görünür */
-            top: 50%;
-            transform: translateY(-50%);
+            position: relative;
+            width: 70vh;
+            height: 70vh;
+            margin-top: -15vh; /* Dairənin bir hissəsini ekranın yuxarısına çıxarır */
+            flex-shrink: 0;
         }
 
-        /* Fırlanan Dairə (Bütöv şəkil üçün) */
+        /* Fırlanan Dairə */
         .circle-spinner {
             width: 100%;
             height: 100%;
             border-radius: 50%;
             position: relative;
             transition: transform 1.2s cubic-bezier(0.65, 0, 0.15, 1);
-            box-shadow: 15px 0 50px rgba(0,0,0,0.8);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
             overflow: hidden;
         }
 
-        /* Bütöv Şəkillər Üçün Qatlar */
+        /* Şəkillər Qatı */
         .circle-slide {
             position: absolute;
             inset: 0;
@@ -89,15 +89,17 @@
         #cSlide1 { opacity: 1; }
         #cSlide2 { opacity: 0; }
 
-        /* Məlumat Paneli */
+        /* Məlumat Paneli Altda */
         .content-container {
-            margin-left: 45vh;
-            width: calc(100vw - 45vh);
-            padding: 40px;
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            height: 100%;
+            align-items: center;
+            text-align: center;
+            padding: 20px 40px;
+            width: 100%;
+            max-width: 900px;
         }
 
         .text-content {
@@ -112,28 +114,28 @@
         }
 
         h1 {
-            font-size: 5rem;
+            font-size: 4.5rem;
             color: #fff;
             font-weight: 800;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
             line-height: 1.1;
-            text-shadow: 2px 4px 15px rgba(0,0,0,0.5);
+            text-shadow: 2px 4px 15px rgba(0,0,0,0.6);
             letter-spacing: -1px;
         }
 
         p {
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             color: #e0e0e0;
             line-height: 1.8;
-            max-width: 500px;
+            max-width: 600px;
+            margin: 0 auto;
             text-shadow: 1px 2px 10px rgba(0,0,0,0.6);
         }
 
-        /* Növbəti düyməsi */
+        /* Mərkəzlənmiş Növbəti Düyməsi */
         .next-btn {
-            align-self: flex-start;
-            margin-top: 40px;
-            padding: 16px 40px;
+            margin-top: 35px;
+            padding: 16px 45px;
             background-color: #fff;
             color: #111;
             border: none;
@@ -141,30 +143,33 @@
             font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
             transition: all 0.3s ease;
         }
 
-        .next-btn:active {
-            transform: scale(0.95);
+        .next-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
         }
 
-        /* Mobil Ekranlar Üçün Uyğunlaşdırma */
+        .next-btn:active {
+            transform: translateY(0) scale(0.95);
+        }
+
+        /* Mobil Ekranlar Üçün Uyğunlaşdırma (Tam İdeal Görünüş) */
         @media (max-width: 768px) {
             .circle-positioner {
-                width: 160vw;
-                height: 160vw;
-                left: -110vw;
+                width: 130vw;
+                height: 130vw;
+                margin-top: -30vw; /* Mobildə dairənin gözəl qövsü yuxarıda görünür */
             }
             .content-container {
-                margin-left: 55vw;
-                width: 45vw;
-                padding: 20px 15px;
+                padding: 15px 20px;
             }
-            h1 { font-size: 2.5rem; margin-bottom: 15px; }
-            p { font-size: 0.95rem; line-height: 1.6; }
+            h1 { font-size: 3rem; margin-bottom: 10px; }
+            p { font-size: 1rem; line-height: 1.6; }
             .next-btn {
-                padding: 12px 25px;
+                padding: 14px 35px;
                 font-size: 1rem;
                 margin-top: 25px;
             }
@@ -173,13 +178,13 @@
 </head>
 <body>
 
-    <!-- Arxa Plan Qatları -->
+    <!-- Arxa Plan Qatları (Çərçivəsiz) -->
     <div class="bg-layer" id="bg1"></div>
     <div class="bg-layer" id="bg2"></div>
     <div class="overlay-dark"></div>
 
     <div class="main-container">
-        <!-- Fırlanan Dairə -->
+        <!-- Fırlanan Dairə Yuxarıda -->
         <div class="circle-positioner">
             <div class="circle-spinner" id="spinner">
                 <div class="circle-slide" id="cSlide1"></div>
@@ -187,7 +192,7 @@
             </div>
         </div>
 
-        <!-- Məlumat Və Düymə -->
+        <!-- Məlumat Və Düymə Aşağıda (Mərkəzdə) -->
         <div class="content-container">
             <div class="text-content" id="textContent">
                 <h1 id="title"></h1>
@@ -198,7 +203,7 @@
     </div>
 
     <script>
-        // Tam olaraq 8 ədəd fərqli şəhər və şəkil
+        // 8 ədəd fərqli şəhər məlumatı
         const slides = [
             { title: "Dubai", desc: "Dubay, müasir memarlığı, dəbdəbəli alış-veriş mərkəzləri və süni adaları ilə tanınan futuristik bir şəhərdir.", img: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1200&q=80" },
             { title: "Tokyo", desc: "Yaponiya paytaxtı Tokyo, ənənəvi məbədləri neon işıqlı göydələnlərlə mükəmməl birləşdirən səs-küylü və dinamik metropoldur.", img: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1200&q=80" },
@@ -228,7 +233,7 @@
             if (isAnimating) return;
             isAnimating = true;
 
-            currentIndex = (currentIndex + 1) % 8; // 8 şəkil arasında dövr edir
+            currentIndex = (currentIndex + 1) % 8; // Tam 8 şəkil dövr edir
             currentRotation -= 360;
 
             const textContent = document.getElementById('textContent');
