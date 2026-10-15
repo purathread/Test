@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Səyahət - Fırlanan Qalereya</title>
+    <title>Xüsusi Geyim və Çap Xidmətləri</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
 
@@ -21,14 +21,12 @@
             background-color: #000;
         }
 
-        /* ÇƏRÇİVƏ PROBLEMİNİ HƏLL EDƏN QAT (130% böyüklükdədir ki, ləkələr ekrana düşməsin) */
+        /* YENİ VƏ QÜSURSUZ ARXA PLAN METODU (Çərçivə problemi yoxdur) */
         .bg-layer {
-            position: absolute;
-            top: -15%; left: -15%; 
-            width: 130%; height: 130%;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
             background-size: cover;
             background-position: center;
-            filter: blur(40px);
             transition: opacity 1.2s ease-in-out;
             z-index: 1;
         }
@@ -36,11 +34,13 @@
         #bg1 { opacity: 1; }
         #bg2 { opacity: 0; }
 
-        /* Arxa planın üzərinə yüngül tünd qat */
-        .overlay-dark {
-            position: absolute;
+        /* Arxa planın üzərindəki şüşə effekti (Blur) və tündləşdirmə */
+        .glass-overlay {
+            position: fixed;
             inset: 0;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.85));
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.85));
             z-index: 2;
         }
 
@@ -61,7 +61,7 @@
             position: relative;
             width: 70vh;
             height: 70vh;
-            margin-top: -15vh; /* Dairənin bir hissəsini ekranın yuxarısına çıxarır */
+            margin-top: -15vh;
             flex-shrink: 0;
         }
 
@@ -114,11 +114,11 @@
         }
 
         h1 {
-            font-size: 4.5rem;
+            font-size: 3.5rem;
             color: #fff;
             font-weight: 800;
             margin-bottom: 15px;
-            line-height: 1.1;
+            line-height: 1.2;
             text-shadow: 2px 4px 15px rgba(0,0,0,0.6);
             letter-spacing: -1px;
         }
@@ -127,7 +127,7 @@
             font-size: 1.15rem;
             color: #e0e0e0;
             line-height: 1.8;
-            max-width: 600px;
+            max-width: 650px;
             margin: 0 auto;
             text-shadow: 1px 2px 10px rgba(0,0,0,0.6);
         }
@@ -156,18 +156,18 @@
             transform: translateY(0) scale(0.95);
         }
 
-        /* Mobil Ekranlar Üçün Uyğunlaşdırma (Tam İdeal Görünüş) */
+        /* Mobil Ekranlar Üçün Uyğunlaşdırma */
         @media (max-width: 768px) {
             .circle-positioner {
                 width: 130vw;
                 height: 130vw;
-                margin-top: -30vw; /* Mobildə dairənin gözəl qövsü yuxarıda görünür */
+                margin-top: -30vw;
             }
             .content-container {
                 padding: 15px 20px;
             }
-            h1 { font-size: 3rem; margin-bottom: 10px; }
-            p { font-size: 1rem; line-height: 1.6; }
+            h1 { font-size: 2.2rem; margin-bottom: 10px; }
+            p { font-size: 0.95rem; line-height: 1.6; }
             .next-btn {
                 padding: 14px 35px;
                 font-size: 1rem;
@@ -178,10 +178,10 @@
 </head>
 <body>
 
-    <!-- Arxa Plan Qatları (Çərçivəsiz) -->
+    <!-- Arxa Plan Qatları -->
     <div class="bg-layer" id="bg1"></div>
     <div class="bg-layer" id="bg2"></div>
-    <div class="overlay-dark"></div>
+    <div class="glass-overlay"></div>
 
     <div class="main-container">
         <!-- Fırlanan Dairə Yuxarıda -->
@@ -192,7 +192,7 @@
             </div>
         </div>
 
-        <!-- Məlumat Və Düymə Aşağıda (Mərkəzdə) -->
+        <!-- Məlumat Və Düymə Aşağıda -->
         <div class="content-container">
             <div class="text-content" id="textContent">
                 <h1 id="title"></h1>
@@ -203,16 +203,33 @@
     </div>
 
     <script>
-        // 8 ədəd fərqli şəhər məlumatı
+        // Biznesinizə uyğun 5 xidmət məlumatı və şəkilləri
         const slides = [
-            { title: "Dubai", desc: "Dubay, müasir memarlığı, dəbdəbəli alış-veriş mərkəzləri və süni adaları ilə tanınan futuristik bir şəhərdir.", img: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1200&q=80" },
-            { title: "Tokyo", desc: "Yaponiya paytaxtı Tokyo, ənənəvi məbədləri neon işıqlı göydələnlərlə mükəmməl birləşdirən səs-küylü və dinamik metropoldur.", img: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1200&q=80" },
-            { title: "Paris", desc: "Paris, Fransanın paytaxtı. İncəsənət, qastronomiya və mədəniyyət üzrə dünya mərkəzi olan bu şəhər Eyfel qülləsi ilə tanınır.", img: "https://images.unsplash.com/photo-1502602881460-5c9fc39bb2f3?auto=format&fit=crop&w=1200&q=80" },
-            { title: "New York", desc: "Nyu-York, fərqli mədəniyyətlərin kəsişdiyi, heç vaxt yatmayan şəhər. Azadlıq heykəli və Times Square ilə məşhurdur.", img: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=1200&q=80" },
-            { title: "Roma", desc: "Tarixi qalıqları, Kolizeyi və füsunkar küçələri ilə Roma, sizi keçmişə aparan unikal bir İtaliya şəhəridir.", img: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1200&q=80" },
-            { title: "London", desc: "Böyük Britaniyanın ürəyi London. Temza çayı, Big Ben və qədim sarayları ilə unudulmaz bir tarixə ev sahibliyi edir.", img: "https://images.unsplash.com/photo-1513635269975-5969336cd100?auto=format&fit=crop&w=1200&q=80" },
-            { title: "İstanbul", desc: "Asiya və Avropanı birləşdirən tək şəhər. Boğazın mənzərəsi və tarixi məscidləri ilə hər kəsi valeh edir.", img: "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=1200&q=80" },
-            { title: "Bakı", desc: "Xəzərin mirvarisi Bakı. Qədim İçərişəhər və müasir Alov Qüllələri ilə keçmiş və gələcəyin harmoniyasını yaradır.", img: "https://images.unsplash.com/photo-1582236352932-eb5b252dfa7e?auto=format&fit=crop&w=1200&q=80" }
+            { 
+                title: "Fərdi Dizaynlar", 
+                desc: "Geyimlərin üzərində olacaq şəkilləri DTF çap və naxış toxuma üçün müştərilərin zövqünə uyğun, xüsusi olaraq dizayn edirik.", 
+                img: "https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?auto=format&fit=crop&w=1200&q=80" 
+            },
+            { 
+                title: "DTF Çap Xidməti", 
+                desc: "İstənilən növ geyimlərin üzərinə yüksək keyfiyyətli, rəngarəng və uzunömürlü DTF çap tətbiq edirik.", 
+                img: "https://images.unsplash.com/photo-1562157873-818bc0726f68?auto=format&fit=crop&w=1200&q=80" 
+            },
+            { 
+                title: "Naxış Toxuma", 
+                desc: "Geyimlərin və müxtəlif aksesuarların üzərinə peşəkar avadanlıqlarla xüsusi naxış toxuma (embroidery) xidməti göstəririk.", 
+                img: "https://images.unsplash.com/photo-1624831610444-59e21896d8dd?auto=format&fit=crop&w=1200&q=80" 
+            },
+            { 
+                title: "Restoran Uniformaları", 
+                desc: "Restoran işçiləri üçün rahat, davamlı və brendinizə uyğun peşəkar uniformalar və xüsusi önlüklər hazırlayırıq.", 
+                img: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=1200&q=80" 
+            },
+            { 
+                title: "Kepka Üzərində Loqo", 
+                desc: "Kepkaların üzərinə şirkətinizin və ya brendinizin loqosunu yüksək dəqiqliklə tətbiq edirik.", 
+                img: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=1200&q=80" 
+            }
         ];
 
         let currentIndex = 0;
@@ -233,13 +250,13 @@
             if (isAnimating) return;
             isAnimating = true;
 
-            currentIndex = (currentIndex + 1) % 8; // Tam 8 şəkil dövr edir
+            currentIndex = (currentIndex + 1) % slides.length; // 5 xidmət arasında dövr edir
             currentRotation -= 360;
 
             const textContent = document.getElementById('textContent');
             const spinner = document.getElementById('spinner');
 
-            // Arxa plan Blur Keçidi
+            // Arxa plan Keçidi
             const nextBg = activeBg === 1 ? 2 : 1;
             const currentBgEl = document.getElementById(`bg${activeBg}`);
             const nextBgEl = document.getElementById(`bg${nextBg}`);
